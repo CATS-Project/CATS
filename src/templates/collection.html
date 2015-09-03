@@ -24,10 +24,10 @@
 			<ul>
 				<li>New corpus
 					<ul>
-						<li><a href="#duration">Duration</a></li>
-						<li><a href="#query-keyword">Keyword filter</a></li>
-						<li><a href="#query-location">Location filter</a></li>
-						<li><a href="#query-user">User filter</a></li>
+						<li><a href="#filter-date">Duration</a></li>
+						<li><a href="#filter-keyword">Keyword filter</a></li>
+						<li><a href="#filter-location">Location filter</a></li>
+						<li><a href="#filter-user">User filter</a></li>
 					</ul>	
 				</li>
 				<li>Corpus being collected
@@ -49,12 +49,12 @@
 				<input type="text" name="collection_duration" class="underlined" style="width:615px;"/><br/>
 				<label id="filter-date" style="width: 20%;">Keyword filter (phrases of keywords are specified by a comma-separated list; example: "cat,dog"): </label><br/>
 				<input type="text" name="keyword_list" class="underlined" style="width:615px;"/><br/>
-				<label id="filter-keyword">Location filter (2 longitude,latitude pairs separated by a comma, specifying a bounding box to filter tweets by. Only geo-located Tweets falling within the requested bounding box will be included; example "45.74,4.86,45.76,4.84"): </label><br/>
+				<label id="filter-location">Location filter (2 longitude,latitude pairs separated by a comma, specifying a bounding box to filter tweets by. Only geo-located Tweets falling within the requested bounding box will be included; example "45.74,4.86,45.76,4.84"): </label><br/>
 				<input type="text" name="bounding_box" class="underlined" style="width:615px;"/><br/>
-				<label id="filter-keyword">User filter (A comma separated list of user IDs, indicating the users to return statuses for in the stream; example: "43186109,113613920"): </label><br/>
+				<label id="filter-user>User filter (A comma separated list of user IDs, indicating the users to return statuses for in the stream; example: "43186109,113613920"): </label><br/>
 				<input type="text" name="user_list" class="underlined" style="width:615px;"/><br/>
 				<br/>
-				<input type="radio" name="lang" value="en" checked> English <input type="radio" name="lang" value="fr"> French
+				<input type="radio" name="lang" value="en" checked> English <input type="radio" name="lang" value="fr"> French <input type="radio" name="lang" value="any"> Any language
 				<br/>
 				<br/>
 				<input type="submit" value="Collect tweets" class="button"/>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>CATS - Initialization</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css') }}"/>
+</head>
+
+<body>
+
+	<div id="header">
+		<h1><img src="{{ url_for('static', filename = 'logo.png') }}"/>CATS: initialization</h1>
+	</div>
+	
+	<div style="background-color:#FFFFFF; height:1px;">
+		
+	</div>
+	
+	<div id="content">
+		<div id="sidebar">
+			<label>Navigate on this page:</label><br/>
+			<label><a href="initialization">Initialization</a></label>
+			<ul>
+				<li>Twitter OAuth
+					<ul>
+						<li><a href="#cons-key">Consumer key</a></li>
+						<li><a href="#cons-sec">Consumer secret</a></li>
+						<li><a href="#tok">Token</a></li>
+						<li><a href="#tok-sec">Token secret</a></li>
+					</ul>	
+				</li>
+			</ul>
+		</div>
+		
+		<div id="main-content">
+		    
+		    <h2>Twitter OAuth</h2>
+			<p> Welcome! Before using CATS to collect tweets through Twitter's API, you must be able to connect to it with specific access tokens with which you will be able to use OAuth. For help about how to get your free Twitter OAuth access tokens, take a look at the following page: <a href="https://github.com/CATS-Project/CATS/wiki#getting-your-twitter-oauth">https://github.com/CATS-Project/CATS/wiki#getting-your-twitter-oauth</a></p>
+		    <label id="consumer-key">Consumer key: </label><br/>
+			<form action="{{ url_for('initialization_page2') }}" method="POST">
+				<input type="text" name="consumer-key" class="underlined" style="width:615px;"/><br/>
+				<label id="cons-sec">Consumer secret: </label><br/>
+				<input type="text" name="consumer-secret" class="underlined" style="width:615px;"/><br/>
+				<label id="tok">Token: </label><br/>
+				<input type="text" name="token" class="underlined" style="width:615px;"/><br/>
+				<label id="tok-sec">Token secret: </label><br/>
+				<input type="text" name="token-secret" class="underlined" style="width:615px;"/><br/>
+				<br/>
+				<input type="submit" value="Save tokens and start using CATS" class="button"/>
+		    </form>
+		</div>
+		
+		<div class="clear"></div>
+	</div>
+
+</body>
+
+</html>

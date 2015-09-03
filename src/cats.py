@@ -61,6 +61,16 @@ def get_tweet_count():
     return queries.countDocuments(query=query)
 
 
+@app.route('/cats/initialization')
+def initialization_page():
+    return render_template('initialization.html')
+
+
+@app.route('/cats/initialization', methods=['POST'])
+def initialization_page2():
+    return render_template('initialization.html')
+
+
 @app.route('/cats/collection')
 def collection_dashboard_page():
     if can_collect_tweets and os.path.isfile('collecting.lock'):
