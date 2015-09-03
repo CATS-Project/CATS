@@ -303,7 +303,7 @@ def browse_topics():
         qp = pickle.load(open("lda_query.p", "rb"))
         return render_template('topic_browser.html', topics=r, filter=qp)
     else:
-        return render_template('unavailable.html',method_name='LDA')
+        return render_template('unavailable.html', method_name='LDA')
 
 
 @app.route('/cats/analysis/mabed_events.csv')
@@ -312,7 +312,7 @@ def get_events():
 
 
 @app.route('/cats/analysis/mabed_event_browser')
-def browse_event():
+def browse_events():
     if mabed_running:
         return render_template('waiting.html', method_name='MABED')
     elif os.path.isfile('mabed_events.p'):
@@ -320,7 +320,7 @@ def browse_event():
         qp = pickle.load(open("mabed_query.p", "rb"))
         return render_template('event_browser.html', events=r, filter=qp)
     else:
-        return render_template('unavailable.html',method_name='MABED')
+        return render_template('unavailable.html', method_name='MABED')
         
 if __name__ == '__main__':
     # Demo
