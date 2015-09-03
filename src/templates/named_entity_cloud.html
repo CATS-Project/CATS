@@ -43,7 +43,7 @@
 						    {% set max = doc['count'] %}
 						  {% endif %}
 						  {% if doc['type'] != 'GPE' %}
-							<span data-weight="{{ 50+(50*doc['count']/max) }}">{{ doc['entity'] }}</span>
+							<span data-weight="{{ 50+(50*doc['count']/max) }}"><a href="/cats/analysis/tweets/{{doc['entity']}}">{{ doc['entity'] }}</a></span>
 						  {% endif %}	
 					  	{% endfor %}
 					</div>

@@ -45,7 +45,7 @@
 						    {% set firstLine = 1 %}
 						    {% set max = 1/doc['IDF'] %}
 						  {% endif %}
-							<span data-weight="{{ 50+(50/doc['IDF']/max) }}">{{ doc['word'] }}</span>
+							<span data-weight="{{ 50+(50/doc['IDF']/max) }}"><a href="/cats/analysis/tweets/{{doc['word']}}">{{ doc['word'] }}</a></span>
 					  	{% endfor %}
 					</div>
 					<script>

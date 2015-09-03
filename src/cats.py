@@ -63,7 +63,6 @@ def get_tweet_count():
 
 @app.route('/cats/collection')
 def collection_dashboard_page():
-    print db_name, can_collect_tweets
     if can_collect_tweets and os.path.isfile('collecting.lock'):
         lock = open('collecting.lock', 'r').read()
         corpus_info = lock.split(';')
@@ -170,7 +169,7 @@ def analysis_dashboard_page2():
 
 @app.route('/cats/about')
 def about_page():
-    return render_template('about.html', name=name)
+    return render_template('about.html')
 
 
 @app.route('/cats/analysis/construct_vocabulary')
@@ -202,7 +201,7 @@ def get_term_list():
     return Response(csv,mimetype="text/csv")   
 
 
-@app.route('/cats/analysis/tweets',methods=['POST'])
+@app.route('/cats/analysis/tweets', methods=['POST'])
 def get_tweet_list():
     phrase = request.form['cooccurringwords']
     search = Search(searchPhrase=phrase, dbname=db_name, host=host, port=port, query=query)
@@ -214,13 +213,24 @@ def get_tweet_list():
     return render_template('tweet_browser.html', results=results, filter=query_pretty)
 
 
-def namedEntities(limit=None):
+@app.route('/cats/analysis/tweets/<term>')
+def get_tweet_list2(term):
+    search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=query)
+    results = search.results()
+    for i in range(len(results)):
+        result = results[i]
+        result['rawText'] = result['rawText'].replace('\\', '')
+        results[i] = result
+    return render_template('tweet_browser.html', results=results, filter=query_pretty)
+
+
+def extract_named_entities(limit=None):
     return queries.getNamedEntities(query=query, limit=limit)
 
 
 @app.route('/cats/analysis/named_entities.csv')
 def get_named_entity_list():
-    cursor = namedEntities()
+    cursor = extract_named_entities()
     csv='named_entity,count,type\n'
     for elem in cursor:
         csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
@@ -229,7 +239,7 @@ def get_named_entity_list():
 
 @app.route('/cats/analysis/named_entity_cloud')
 def get_named_entity_cloud():
-    return render_template('named_entity_cloud.html', ne=namedEntities(250), filter=query_pretty)
+    return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=query_pretty)
 
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
