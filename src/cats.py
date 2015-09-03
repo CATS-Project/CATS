@@ -85,6 +85,8 @@ def collection_dashboard_page2():
         lang = checked_lang[0]
         if request.form.get('collection_duration'):
             duration = int(request.form.get('collection_duration'))
+            if duration > 30:
+                duration = 30
         else:
             duration = 1
         if request.form.get('keyword_list'):
