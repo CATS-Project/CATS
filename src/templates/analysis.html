@@ -83,8 +83,8 @@
 		    <h3 id="vocabulary">Vocabulary</h3>
 			<p>The vocabulary is the set of all terms weighted by their frequency in tweets. You can either download the entire vocabulary as a CSV file or visualize it as a cloud.</p>
 			<br/>
-		    <a href="{{ url_for('getTerms') }}"><button>Download the vocabulary</button></a>
-		    <a href="{{ url_for('getTermCloud') }}"><button>Visualize the vocabulary</button></a>
+		    <a href="{{ url_for('get_term_list') }}"><button>Download the vocabulary</button></a>
+		    <a href="{{ url_for('get_term_cloud') }}"><button>Visualize the vocabulary</button></a>
 		    <br/>
 		    <br/>
 			
@@ -93,7 +93,7 @@
 
 		    <label>Terms (separated by a space, example: "cat dog"): </label> 
 		    <br/>
-		    <form action="{{ url_for('getTweets') }}" method="POST"><input type="text" name="cooccurringwords" class="underlined" style="width: 615px;"/>
+		    <form action="{{ url_for('get_tweet_list') }}" method="POST"><input type="text" name="cooccurringwords" class="underlined" style="width: 615px;"/>
 				<br/>
 				<br/>
 		    	<input type="submit" value="Browse tweets" class="button"/>
@@ -106,8 +106,8 @@
 	
 		    <p>Named-entity recognition consists in automatically locating names of persons, organizations and locations in tweets. You can either download the set of detected named-entities (weighted by their frequency in tweets) as a CSV file or visualize it as a cloud.</p>
     		<br/>
-		    <a href="{{ url_for('getNamedEntities') }}"><button>Download the list of named-entities</button></a>
-		    <a href="{{ url_for('getNamedEntityCloud') }}"><button>Visualize named-entities</button></a>
+		    <a href="{{ url_for('get_named_entity_list') }}"><button>Download the list of named-entities</button></a>
+		    <a href="{{ url_for('get_named_entity_cloud') }}"><button>Visualize named-entities</button></a>
 		    <br/>
 		    <br/>
 
@@ -121,14 +121,14 @@
 
 		    <label>Number of topics (example: "10"):</label>
 			<br/>
-		    <form action="{{ url_for('trainLDA') }}" method="POST"><input type="text" name="k-lda" class="underlined" style="width: 615px;"/>
+		    <form action="{{ url_for('train_lda') }}" method="POST"><input type="text" name="k-lda" class="underlined" style="width: 615px;"/>
 				<br/>
 				<br/>
 		    	<input type="submit" value="Run LDA" class="button"/>
 		    </form>
 			<br/>
-		    <a href="{{ url_for('getTopics') }}"><button>Download topics</button></a>
-		    <a href="{{ url_for('browseTopics') }}"><button>Browse topics</button></a>
+		    <a href="{{ url_for('get_topics') }}"><button>Download topics</button></a>
+		    <a href="{{ url_for('browse_topics') }}"><button>Browse topics</button></a>
 		    <br/>
 		    <br/>
 
@@ -142,14 +142,14 @@
 			
 		    <label>Number of events (example: "10" will return the 10 most impactful detected events):</label>
 			<br/>
-		    <form action="{{ url_for('runMABED') }}" method="POST"><input type="text" name="k-mabed" class="underlined" style="width: 615px;"/>
+		    <form action="{{ url_for('run_mabed') }}" method="POST"><input type="text" name="k-mabed" class="underlined" style="width: 615px;"/>
 				<br/>
 				<br/>
 		    	<input type="submit" value="Run MABED" class="button"/>
 		    </form>
 			<br/>
-		    <a href="{{ url_for('getEvents') }}"><button>Download events</button></a>
-		    <a href="{{ url_for('browseEvents') }}"><button>Browse events</button></a>
+		    <a href="{{ url_for('get_events') }}"><button>Download events</button></a>
+		    <a href="{{ url_for('browse_events') }}"><button>Browse events</button></a>
 		    <br/>
 		    <br/>
 			

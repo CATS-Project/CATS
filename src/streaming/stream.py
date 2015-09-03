@@ -34,7 +34,7 @@ class Streaming:
         nb_tweets_infile = 0
         nb_files = 1
         last_import_day = datetime.datetime.now().day
-        file = open('streaming/data/'+str(nb_files)+'.csv', 'a')
+        file = open('streaming/data/'+str(nb_files)+'.csv', 'w')
         auth = OAuth(
             consumer_key=str(open('streaming/consumer_key','r').read()),
             consumer_secret=str(open('streaming/consumer_secret','r').read()),
@@ -59,6 +59,7 @@ class Streaming:
         for tweet in iterator:
             try:
                 if tweet.get('text'):
+                    print tweet
                     text = tweet['text']
                     text = text.replace('"',' ')
                     text = quote(text.replace('\n',' '))
@@ -98,6 +99,4 @@ class Streaming:
 if __name__ == '__main__':
     s = Streaming(dbname='TwitterDBTest')
     keywords = 'obama,hollande'
-    users = '7302282,14857290,133663801'
-    location = '-122.75,36.8,-121.75,37.8'
     s.collect_tweets(keys=keywords)
