@@ -44,18 +44,20 @@
 		<div id="main-content">
 		    
 		    <h2>New corpus</h2>
-		    <label id="duration">Duration (number of days during which tweets should be collected, example "30"): </label><br/>
+
 			<form action="{{ url_for('collection_dashboard_page2') }}" method="POST">
+				<p>Specify the duration of the collection (at most 30 days) and choose a particular language for the tweets which will be collected:</p>
+				<label id="duration">&bull; Duration (number of days during which tweets should be collected, example "15"): </label><br/>
 				<input type="text" name="collection_duration" class="underlined" style="width:615px;"/><br/>
-				<label id="filter-date" style="width: 20%;">Keyword filter (phrases of keywords are specified by a comma-separated list; example: "cat,dog"): </label><br/>
+				<label id="language">&bull; Language: </label></form><br/>
+				<input type="radio" name="lang" value="en" checked> English <input type="radio" name="lang" value="fr"> French <input type="radio" name="lang" value="any"> Any language<br/><br/>
+				<p>Select at most one of the following collection filters (if no filter is applied, you will collect the non-random 1% sample of tweets delivered by Twitter):</p>
+				<label id="filter-date" style="width: 20%;">&bull; Keyword filter (phrases of keywords are specified by a comma-separated list; example: "cat,dog"): </label><br/>
 				<input type="text" name="keyword_list" class="underlined" style="width:615px;"/><br/>
-				<label id="filter-location">Location filter (2 longitude,latitude pairs separated by a comma, specifying a bounding box to filter tweets by. Only geo-located Tweets falling within the requested bounding box will be included; example "45.74,4.86,45.76,4.84"): </label><br/>
+				<label id="filter-location">&bull; Location filter (2 longitude,latitude pairs separated by a comma, specifying a bounding box to filter tweets by. Only geo-located Tweets falling within the requested bounding box will be included; example "45.74,4.86,45.76,4.84"): </label><br/>
 				<input type="text" name="bounding_box" class="underlined" style="width:615px;"/><br/>
-				<label id="filter-user">User filter (A comma separated list of user IDs, indicating the users to return statuses for in the stream; example: "43186109,113613920"): </label><br/>
+				<label id="filter-user">&bull; User filter (A comma separated list of user IDs, indicating the users to return statuses for in the stream; example: "43186109,113613920"): </label><br/>
 				<input type="text" name="user_list" class="underlined" style="width:615px;"/><br/>
-				<br/>
-				<input type="radio" name="lang" value="en" checked> English <input type="radio" name="lang" value="fr"> French <input type="radio" name="lang" value="any"> Any language
-				<br/>
 				<br/>
 				<input type="submit" value="Collect tweets" class="button"/>
 		    </form>
