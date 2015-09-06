@@ -26,8 +26,11 @@
 		    <h2>User login</h2>
 			<p>If you have a username and a password to use CATS, you can proceed to login. To learn more about CATS and how to get credentials, take a look at the following page: <a href="https://github.com/CATS-Project/CATS/wiki">https://github.com/CATS-Project/CATS/wiki</a></p>
 			<form action="" method="POST">
-				<input class="underlined" style="width:615px;" type="text" placeholder="Username" name="username" value="{{ request.form.username }}"><br/>
-         		<input class="underlined" style="width:615px;" type="password" placeholder="Password" name="password" value="{{ request.form.password }}"><br/>
+				<label>Username:</label><br/>
+				<input class="underlined" style="width:615px;" type="text" name="username" value="{{ request.form.username }}"><br/>
+         		<label>Password:</label><br/>
+				<input class="underlined" style="width:615px;" type="password" name="password" value="{{ request.form.password }}"><br/>
+				<br/>
         		<input class="button" type="submit" value="Login">
 			</form>
 			{% if error %}
