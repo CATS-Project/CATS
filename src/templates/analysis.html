@@ -10,7 +10,7 @@
 <body>
 
 	<div id="header">
-		<h1><img src="{{ url_for('static', filename = 'logo.png') }}"></img>CATS: tweet analysis dashboard</h1>
+		<h1><img src="{{ url_for('static', filename = 'logo.png') }}"/>CATS: tweet analysis dashboard</h1>
 	</div>
 	
 	<div style="background-color:#FFFFFF; height:1px;">
@@ -26,9 +26,7 @@
 					<ul>
 						<li><a href="#filter-date">By date</a></li>
 						<li><a href="#filter-keyword">By keyword</a></li>
-						<li><a href="#filter-gender">By gender</a></li>
-						<li><a href="#filter-age">By age</a></li>
-					</ul>	
+					</ul>
 				</li>
 				<li>Corpus browsing
 					<ul>
@@ -68,13 +66,10 @@
 				<input type="text" name="date" class="underlined" style="width:615px;" value="{{ dates }}"/><br/>
 				<label id="filter-keyword">By keyword (a list of terms separated by a space, example: "cat dog"): </label><br/>
 				<input type="text" name="keyword" class="underlined" style="width:615px;" value="{{ keywords }}"/><br/>
-				<label id="filter-gender">By gender: </label><br/>
-				<input type="checkbox" name="gender" value="femme" checked> Female authors <input type="checkbox" name="gender" value="homme" checked> Male authors <br/>
-				<label id="filter-gender">By age: </label><br/>
-				<input type="checkbox" name="age" value="5-11" checked> [5-11] <input type="checkbox" name="age" value="12-18" checked> [12-18] <input type="checkbox" name="age" value="19-30" checked> [19-30] <input type="checkbox" name="age" value="31-45" checked> [31-45] <input type="checkbox" name="age" value="45-60" checked> [45-60] <input type="checkbox" name="age" value="61-99" checked> [61-99]   <br/>
 				<br/>
 
-		    	<input type="submit" value="Filter tweets" class="button"/><input type="checkbox" name="download" value="download"> Download tweets as a CSV file
+		    	<input type="submit" value="Filter tweets" class="button"/> <a href="{{ url_for('download_tweets') }}"><button>Download tweets</button></a>
+
 		    </form>
            	<label>{% if tweetCount %} {{ tweetCount }}{% endif %} tweets</label>
 

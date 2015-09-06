@@ -68,6 +68,10 @@ def requires_auth(f):
     return decorated
 
 
+def download_tweets():
+    return ""
+
+
 def get_tweet_count():
     return queries.countDocuments(query=query)
 
