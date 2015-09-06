@@ -23,16 +23,15 @@
 		</div>
 		
 		<div id="main-content">
-		    
-		    <h2>Login</h2>
-			<p>Please login</p>
+		    <h2>User login</h2>
+			<p>If you have a username and a password to use CATS, you can proceed to login. To learn more about CATS and how to get credentials, take a look at the following page: <a href="https://github.com/CATS-Project/CATS/wiki">https://github.com/CATS-Project/CATS/wiki</a></p>
 			<form action="" method="POST">
-				<input class="underlined" style="width:615px;" type="text" placeholder="Username" name="username" value="{{ request.form.username }}">
-         		<input class="underlined" style="width:615px;" type="password" placeholder="Password" name="password" value="{{ request.form.password }}">
+				<input class="underlined" style="width:615px;" type="text" placeholder="Username" name="username" value="{{ request.form.username }}"><br/>
+         		<input class="underlined" style="width:615px;" type="password" placeholder="Password" name="password" value="{{ request.form.password }}"><br/>
         		<input class="button" type="submit" value="Login">
 			</form>
 			{% if error %}
-				<p class="error"><strong>Error:</strong> {{ error }}
+				<p><strong>Error:</strong> {{ error }}</p>
       		{% endif %}
 		</div>
 		
