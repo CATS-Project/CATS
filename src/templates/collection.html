@@ -47,7 +47,7 @@
 
 			<form action="{{ url_for('collection_dashboard_page2') }}" method="POST">
 				<p>Specify the duration of the collection (at most 30 days) and choose a particular language for the tweets which will be collected:</p>
-				<label id="duration">&bull; Duration (number of days during which tweets should be collected, example "15"): </label><br/>
+				<label id="duration"><a href="#">Duration<span>Number of days during which tweets should be collected, example "15"</span></a><br/>
 				<input type="text" name="collection_duration" class="underlined" style="width:615px;"/><br/>
 				<label id="language">&bull; Language: </label></form><br/>
 				<input type="radio" name="lang" value="en" checked> English <input type="radio" name="lang" value="fr"> French <input type="radio" name="lang" value="any"> Any language<br/><br/>
