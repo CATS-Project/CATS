@@ -68,6 +68,7 @@ def requires_auth(f):
     return decorated
 
 
+@app.route('/cats/analysis/tweets.csv')
 def download_tweets():
     return ""
 
