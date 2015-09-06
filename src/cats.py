@@ -129,7 +129,7 @@ def analysis_dashboard_page():
     dates = ""
     keys = ""
     if query.get("words.word"):
-        keys = ' '.join(query["words.word"].get("$in"))
+        keys = ','.join(query["words.word"].get("$in"))
     if query.get("date"): 
         dates = query["date"].get("$gt")+' '+query["date"].get("$lte")
     return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys)
@@ -139,9 +139,7 @@ def analysis_dashboard_page():
 def analysis_dashboard_page2():
     keywords = request.form['keyword']
     date = request.form['date']
-    checked_genders = request.form.getlist('gender')
-    checked_ages = request.form.getlist('age')
-    print date,keywords,checked_genders,checked_ages
+    keywords = keywords.replace(',', ' ')
     lem = LemmatizeText(keywords)
     lem.createLemmaText()
     lem.createLemmas()
@@ -153,18 +151,12 @@ def analysis_dashboard_page2():
     global query_pretty
     query_pretty = ""
     if word_list:
-        query_pretty += "Keyword filter: "+' '.join(word_list)+"<br/>"
-        query["words.word"] = {"$in": word_list }
+        query_pretty += "Keyword filter: "+','.join(word_list)+"<br/>"
+        query["words.word"] = {"$in": word_list}
     if date:
         query_pretty += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
-        query["date"] = {"$gt": start, "$lte": end }
-    if checked_ages and 0 < len(checked_ages) < 6:
-        query_pretty += "Age filter: "+' '.join(checked_ages)+"<br/>"
-        query["age"] = {"$in": checked_ages }
-    if checked_genders and len(checked_genders) == 1:
-        query_pretty += "Gender filter: "+' '.join(checked_genders)+"<br/>"
-        query["gender"] = checked_genders[0]
+        query["date"] = {"$gt": start, "$lte": end}
     if query:
         queries.constructVocabulary(query=query)
     tweet_count = get_tweet_count()
@@ -335,12 +327,12 @@ def thread_mabed(k):
 
 
 @app.route('/cats/analysis/lda_topics.csv')
-def get_topics():
+def get_lda_topics():
     return ""   
 
 
 @app.route('/cats/analysis/lda_topic_browser')
-def browse_topics():
+def browse_lda_topics():
     if lda_running:
         return render_template('waiting.html', method_name='LDA')
     elif os.path.isfile('lda_topics.p'):

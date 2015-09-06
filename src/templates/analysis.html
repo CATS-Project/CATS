@@ -64,7 +64,7 @@
 		    <label id="filter-date" style="width: 20%;">By date (starting and ending date (YYYY-MM-DD) separated by a space, example: "2015-04-06 2015-04-13"): </label><br/>
 			<form action="{{ url_for('analysis_dashboard_page2') }}" method="POST">
 				<input type="text" name="date" class="underlined" style="width:615px;" value="{{ dates }}"/><br/>
-				<label id="filter-keyword">By keyword (a list of terms separated by a space, example: "cat dog"): </label><br/>
+				<label id="filter-keyword">By keyword (a list of terms separated by a comma, example: "cat,dog"): </label><br/>
 				<input type="text" name="keyword" class="underlined" style="width:615px;" value="{{ keywords }}"/><br/>
 				<br/>
 		    	<input type="submit" value="Filter tweets" class="button"/>
@@ -122,14 +122,14 @@
 		    	<input type="submit" value="Run LDA" class="button"/>
 		    </form>
 			<br/>
-		    <a href="{{ url_for('get_topics') }}"><button>Download topics</button></a>
-		    <a href="{{ url_for('browse_topics') }}"><button>Browse topics</button></a>
+		    <a href="{{ url_for('get_lda_topics') }}"><button>Download topics</button></a>
+		    <a href="{{ url_for('browse_lda_topics') }}"><button>Browse topics</button></a>
 		    <br/>
 		    <br/>
 
 			<h3 id="lsa">LSA</h3>
 
-		    <p>LSA (i.e. Latent Semantic Analysis) is a model that represents tweets as mixtures of topics, each topic being associated to a probability distribution over a set of words.</p>
+		    <p>LSA (i.e. Latent Semantic Analysis) is </p>
 
 		    <label>Number of topics (example: "10"):</label>
 			<br/>
@@ -139,8 +139,8 @@
 		    	<input type="submit" value="Run LSA" class="button"/>
 		    </form>
 			<br/>
-		    <a href="{{ url_for('get_topics') }}"><button>Download topics</button></a>
-		    <a href="{{ url_for('browse_topics') }}"><button>Browse topics</button></a>
+		    <a href="{{ url_for('get_lsa_topics') }}"><button>Download topics</button></a>
+		    <a href="{{ url_for('browse_lsa_topics') }}"><button>Browse topics</button></a>
 		    <br/>
 		    <br/>
 
