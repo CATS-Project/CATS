@@ -67,10 +67,9 @@
 				<label id="filter-keyword">By keyword (a list of terms separated by a space, example: "cat dog"): </label><br/>
 				<input type="text" name="keyword" class="underlined" style="width:615px;" value="{{ keywords }}"/><br/>
 				<br/>
-
-		    	<input type="submit" value="Filter tweets" class="button"/> <a href="{{ url_for('download_tweets') }}"><button>Download tweets</button></a>
-
+		    	<input type="submit" value="Filter tweets" class="button"/>
 		    </form>
+			<a href="{{ url_for('download_tweets') }}"><button>Download tweets</button></a>
            	<label>{% if tweetCount %} {{ tweetCount }}{% endif %} tweets</label>
 
 		    <h2>Corpus browsing</h2>
