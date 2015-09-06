@@ -372,4 +372,4 @@ def browse_events():
         
 if __name__ == '__main__':
     # Demo
-    app.run(debug=True, host='mediamining.univ-lyon2.fr', port=5000)
+    app.run(debug=True, host='mediamining.univ-lyon2.fr', port=6666)
