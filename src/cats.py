@@ -259,8 +259,7 @@ def thread_lda(k):
         for topic in doc:
             scores[int(topic[0])] += float(topic[1])
     topics = []
-    for i in range(0,k):
-        print(results[0][i])
+    for i in range(0, k):
         topics.append([i, scores[i], results[0][i]])
     lda_running = False
     pickle.dump(topics, open("lda_topics.p", "wb"))
@@ -285,6 +284,8 @@ def thread_lsa(k):
     results = lsa.apply(query=query, num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
+    for i in range(0, k):
+        topics.append([i, 0, results[i]])
     lsa_running = False
     pickle.dump(topics, open("lsa_topics.p", "wb"))
     pickle.dump(query_pretty, open("lsa_query.p", "wb"))
@@ -372,4 +373,4 @@ def browse_events():
         
 if __name__ == '__main__':
     # Demo
-    app.run(debug=True, host='mediamining.univ-lyon2.fr', port=6666)
+    app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
