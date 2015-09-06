@@ -1,4 +1,4 @@
-from mllib.train_lda import TrainLDA
+from mllib.train_lda import LDA
 from mllib.topic_modeling import TopicModeling
 from mllib.market_matrix import MarketMatrix
 from indexing.vocabulary_index import VocabularyIndex
@@ -9,7 +9,7 @@ query={'gender': 'homme'}
 
 print 'Using TrainLDA class... \n'
 start = time()
-lda = TrainLDA(dbname='TwitterDB')
+lda = LDA(dbname='TwitterDB')
 topics = lda.trainLDA(query=query, num_topics=15, num_words=10, iterations=500)
 if topics:
     for t in topics:

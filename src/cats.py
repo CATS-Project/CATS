@@ -7,7 +7,8 @@ __status__ = "Production"
 from flask import Flask, Response, render_template, request, url_for, redirect
 from search_mongo_new import Search
 from nlplib.lemmatize_text import LemmatizeText
-from mllib.train_lda import TrainLDA
+from mllib.train_lda import LDA
+from mllib.train_lsa import LSA
 from mabed.mabed_files import MabedFiles
 import subprocess
 import os
@@ -27,6 +28,7 @@ port = 27017
 queries = Queries(dbname=db_name, host=host, port=port)
 can_collect_tweets = False
 lda_running = False
+lsa_running = False
 mabed_running = False
 
 app = Flask(__name__)
@@ -34,10 +36,6 @@ app = Flask(__name__)
 query = {}
 
 query_pretty = ""
-
-
-def check_auth(username, password):
-    return username == 'demo' and password == 'ilikecats'
 
 
 @app.route('/cats/login', methods=['GET', 'POST'])
@@ -49,23 +47,6 @@ def login():
         else:
             return collection_dashboard_page()
     return render_template('login.html', error=error)
-
-
-def authenticate():
-    return Response(
-        'Could not verify your access level for that URL.\n'
-        'You have to login with proper credentials', 401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})
-
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
 
 
 @app.route('/cats/analysis/tweets.csv')
@@ -102,7 +83,6 @@ def collection_dashboard_page():
 
 
 @app.route('/cats/collection', methods=['POST'])
-@requires_auth
 def collection_dashboard_page2():
     if can_collect_tweets and not os.path.isfile('collecting.lock'):
         lock = open("collecting.lock", "w")
@@ -143,7 +123,6 @@ def collection_thread(duration, keywords, users, location, language):
 
 
 @app.route('/cats/analysis')
-@requires_auth
 def analysis_dashboard_page():
     print db_name
     tweet_count = get_tweet_count()
@@ -157,7 +136,6 @@ def analysis_dashboard_page():
 
 
 @app.route('/cats/analysis', methods=['POST'])
-@requires_auth
 def analysis_dashboard_page2():
     keywords = request.form['keyword']
     date = request.form['date']
@@ -260,7 +238,7 @@ def get_named_entity_list():
     csv='named_entity,count,type\n'
     for elem in cursor:
         csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
-    return Response(csv,mimetype="text/csv") 
+    return Response(csv, mimetype="text/csv")
 
 
 @app.route('/cats/analysis/named_entity_cloud')
@@ -274,16 +252,16 @@ def train_lda():
         k = int(request.form['k-lda'])
         t = threading.Thread(target=thread_lda, args=(k,))
         t.start()
-        return render_template('waiting.html',method_name='LDA')
+        return render_template('waiting.html', method_name='LDA')
     else:
-        return render_template('already_running.html',method_name='LDA')
+        return render_template('already_running.html', method_name='LDA')
 
 
 def thread_lda(k):
     global lda_running
     lda_running = True
-    lda = TrainLDA(dbname=db_name, host=host, port=port)
-    results = lda.fitLDA(query=query, num_topics=k, num_words=10, iterations=500)
+    lda = LDA(dbname=db_name, host=host, port=port)
+    results = lda.apply(query=query, num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
     for doc in results[1]:
         for topic in doc:
@@ -295,6 +273,35 @@ def thread_lda(k):
     lda_running = False
     pickle.dump(topics, open("lda_topics.p", "wb"))
     pickle.dump(query_pretty, open("lda_query.p", "wb"))
+
+
+@app.route('/cats/analysis/train_lsa', methods=['POST'])
+def train_lsa():
+    if not lsa_running:
+        k = int(request.form['k-lsa'])
+        t = threading.Thread(target=thread_lsa, args=(k,))
+        t.start()
+        return render_template('waiting.html', method_name='LSA')
+    else:
+        return render_template('already_running.html', method_name='LSA')
+
+
+def thread_lsa(k):
+    global lsa_running
+    lsa_running = True
+    lda = LSA(dbname=db_name, host=host, port=port)
+    results = lda.apply(query=query, num_topics=k, num_words=10, iterations=500)
+    scores = [0]*k
+    for doc in results[1]:
+        for topic in doc:
+            scores[int(topic[0])] += float(topic[1])
+    topics = []
+    for i in range(0,k):
+        print(results[0][i])
+        topics.append([i, scores[i], results[0][i]])
+    lsa_running = False
+    pickle.dump(topics, open("lsa_topics.p", "wb"))
+    pickle.dump(query_pretty, open("lsa_query.p", "wb"))
 
 
 @app.route('/cats/analysis/detect_events',methods=['POST']) 

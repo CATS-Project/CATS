@@ -1,10 +1,9 @@
 # coding: utf-8
 
-__author__ = "Ciprian-Octavian Truică"
-__copyright__ = "Copyright 2015, University Politehnica of Bucharest"
+__author__ = "Adrien Guille"
 __license__ = "GNU GPL"
 __version__ = "0.1"
-__email__ = "ciprian.truica@cs.pub.ro"
+__email__ = "adrien.guille@univ-lyon2.fr"
 __status__ = "Production"
 
 import pymongo
@@ -16,7 +15,7 @@ cachedStopWords_en = stopwords.words("english")
 cachedStopWords_fr = stopwords.words("french") + ["ce", "cet", "cette", "le", "les"]
 
 
-class LDA:
+class LSA:
     def __init__(self, dbname='TwitterDB', host='localhost', port=27017, language='EN' ):
         client = pymongo.MongoClient(host=host, port=port)
         self.db = client[dbname]
@@ -35,9 +34,8 @@ class LDA:
             corpus = [dictionary.doc2bow(document) for document in documents]
             tfidf = models.TfidfModel(corpus)
             corpus_tfidf = tfidf[corpus]
-            lda = models.LdaModel(corpus=corpus_tfidf, id2word=dictionary, iterations=iterations, num_topics=num_topics)
-            corpus_lda = lda[corpus_tfidf]
-            return [lda.show_topics(num_topics=num_topics, num_words=num_words, formatted=False),corpus_lda]
+            models.LsiModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=num_topics)
+            lsa = models.LdaModel(corpus=corpus_tfidf, id2word=dictionary, iterations=iterations, num_topics=num_topics)
+            return [lsa.show_topics(num_topics=num_topics, num_words=num_words, formatted=False)]
         except Exception as e:
             print e
-
