@@ -227,7 +227,7 @@ def extract_named_entities(limit=None):
 @app.route('/cats/analysis/named_entities.csv')
 def get_named_entity_list():
     cursor = extract_named_entities()
-    csv='named_entity,count,type\n'
+    csv = 'named_entity,count,type\n'
     for elem in cursor:
         csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
     return Response(csv, mimetype="text/csv")
@@ -281,16 +281,10 @@ def train_lsa():
 def thread_lsa(k):
     global lsa_running
     lsa_running = True
-    lda = LSA(dbname=db_name, host=host, port=port)
-    results = lda.apply(query=query, num_topics=k, num_words=10, iterations=500)
-    scores = [0]*k
-    for doc in results[1]:
-        for topic in doc:
-            scores[int(topic[0])] += float(topic[1])
+    lsa = LSA(dbname=db_name, host=host, port=port)
+    results = lsa.apply(query=query, num_topics=k, num_words=10)
+    print 'LSA\n', results
     topics = []
-    for i in range(0,k):
-        print(results[0][i])
-        topics.append([i, scores[i], results[0][i]])
     lsa_running = False
     pickle.dump(topics, open("lsa_topics.p", "wb"))
     pickle.dump(query_pretty, open("lsa_query.p", "wb"))
@@ -341,6 +335,23 @@ def browse_lda_topics():
         return render_template('topic_browser.html', topics=r, filter=qp)
     else:
         return render_template('unavailable.html', method_name='LDA')
+
+
+@app.route('/cats/analysis/lda_topics.csv')
+def get_lsa_topics():
+    return ""
+
+
+@app.route('/cats/analysis/lda_topic_browser')
+def browse_lsa_topics():
+    if lsa_running:
+        return render_template('waiting.html', method_name='LSA')
+    elif os.path.isfile('lsa_topics.p'):
+        r = pickle.load(open("lsa_topics.p", "rb"))
+        qp = pickle.load(open("lsa_query.p", "rb"))
+        return render_template('topic_browser.html', topics=r, filter=qp)
+    else:
+        return render_template('unavailable.html', method_name='LSA')
 
 
 @app.route('/cats/analysis/mabed_events.csv')

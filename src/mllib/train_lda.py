@@ -37,7 +37,7 @@ class LDA:
             corpus_tfidf = tfidf[corpus]
             lda = models.LdaModel(corpus=corpus_tfidf, id2word=dictionary, iterations=iterations, num_topics=num_topics)
             corpus_lda = lda[corpus_tfidf]
-            return [lda.show_topics(num_topics=num_topics, num_words=num_words, formatted=False),corpus_lda]
+            return [lda.show_topics(num_topics=num_topics, num_words=num_words, formatted=False), corpus_lda]
         except Exception as e:
             print e
 
