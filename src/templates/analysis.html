@@ -69,7 +69,8 @@
 				<br/>
 		    	<input type="submit" value="Filter tweets" class="button"/>
 		    </form>
-			<a href="{{ url_for('get_term_list') }}"><button>Download tweets</button></a>
+			<br/>
+			<a href="{{ url_for('download_tweets') }}"><button>Download tweets</button></a>
            	<label>{% if tweetCount %} {{ tweetCount }}{% endif %} tweets</label>
 
 		    <h2>Corpus browsing</h2>
