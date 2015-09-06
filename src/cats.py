@@ -290,7 +290,7 @@ def thread_lsa(k):
     pickle.dump(query_pretty, open("lsa_query.p", "wb"))
 
 
-@app.route('/cats/analysis/detect_events',methods=['POST']) 
+@app.route('/cats/analysis/detect_events', methods=['POST'])
 def run_mabed():
     if not mabed_running:
         k = int(request.form['k-mabed'])
@@ -337,12 +337,12 @@ def browse_lda_topics():
         return render_template('unavailable.html', method_name='LDA')
 
 
-@app.route('/cats/analysis/lda_topics.csv')
+@app.route('/cats/analysis/lsa_topics.csv')
 def get_lsa_topics():
     return ""
 
 
-@app.route('/cats/analysis/lda_topic_browser')
+@app.route('/cats/analysis/lsa_topic_browser')
 def browse_lsa_topics():
     if lsa_running:
         return render_template('waiting.html', method_name='LSA')

@@ -36,6 +36,6 @@ class LSA:
             corpus_tfidf = tfidf[corpus]
             models.LsiModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=num_topics)
             lsa = models.LdaModel(corpus=corpus_tfidf, id2word=dictionary, iterations=iterations, num_topics=num_topics)
-            return [lsa.show_topics(num_topics=num_topics, num_words=num_words, formatted=False)]
+            return [lsa.show_topics(num_topics=num_topics, num_words=num_words, formatted=True)]
         except Exception as e:
             print e
