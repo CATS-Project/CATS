@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>CATS - Initialization</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css') }}"/>
+</head>
+
+<body>
+
+	<div id="header">
+		<h1><img src="{{ url_for('static', filename = 'logo.png') }}"/>CATS: login</h1>
+	</div>
+	
+	<div style="background-color:#FFFFFF; height:1px;">
+		
+	</div>
+	
+	<div id="content">
+		<div id="sidebar">
+
+		</div>
+		
+		<div id="main-content">
+		    
+		    <h2>Login</h2>
+			<p>Please login</p>
+			<form action="" method="POST">
+				<input class="underlined" style="width:615px;" type="text" placeholder="Username" name="username" value="{{ request.form.username }}">
+         		<input class="underlined" style="width:615px;" type="password" placeholder="Password" name="password" value="{{ request.form.password }}">
+        		<input class="button" type="submit" value="Login">
+			</form>
+			{% if error %}
+				<p class="error"><strong>Error:</strong> {{ error }}
+      		{% endif %}
+		</div>
+		
+		<div class="clear"></div>
+	</div>
+
+</body>
+
+</html>

@@ -4,7 +4,7 @@ __version__ = "0.1"
 __email__ = "adrien.guille@univ-lyon2.fr"
 __status__ = "Production"
 
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, url_for, redirect
 from search_mongo_new import Search
 from nlplib.lemmatize_text import LemmatizeText
 from mllib.train_lda import TrainLDA
@@ -38,6 +38,17 @@ query_pretty = ""
 
 def check_auth(username, password):
     return username == 'demo' and password == 'ilikecats'
+
+
+@app.route('/cats/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
 
 
 def authenticate():
