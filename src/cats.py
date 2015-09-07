@@ -46,6 +46,7 @@ def login():
     if request.method == 'POST':
         if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
             session['name'] = request.form['username']
+            session['query'] = {}
             return collection_dashboard_page()
         else:
             error = 'Invalid Credentials. Please try again.'
@@ -135,8 +136,8 @@ def analysis_dashboard_page():
     tweet_count = get_tweet_count()
     dates = ""
     keys = ""
-    if query.get("words.word"):
-        keys = ','.join(query["words.word"].get("$in"))
+    if session['query'].get("words.word"):
+        keys = ','.join(session['query']["words.word"].get("$in"))
     if query.get("date"): 
         dates = query["date"].get("$gt")+' '+query["date"].get("$lte")
     return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
@@ -159,7 +160,7 @@ def analysis_dashboard_page2():
     query_pretty = ""
     if word_list:
         query_pretty += "Keyword filter: "+','.join(word_list)+"<br/>"
-        query["words.word"] = {"$in": word_list}
+        session['query']["words.word"] = {"$in": word_list}
     if date:
         query_pretty += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
