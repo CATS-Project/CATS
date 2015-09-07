@@ -164,7 +164,8 @@ def analysis_dashboard_page2():
         query_pretty += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
         query["date"] = {"$gt": start, "$lte": end}
-    if query:
+    print session['query']
+    if session.get('query'):
         queries.constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
     return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
