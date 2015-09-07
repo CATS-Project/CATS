@@ -227,7 +227,7 @@ def get_tweet_list2(term):
     return render_template('tweet_browser.html', results=results, filter=query_pretty)
 
 
-def extract_named_entities(limit=None):
+def extract_named_entities(limit=0):
     return queries.getNamedEntities(query=query, limit=limit)
 
 
@@ -382,4 +382,4 @@ if __name__ == '__main__':
     # Demo
     app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
     #local
-    #app.run(debug=True, host='localhost', port=5000)
+    #app.run(debug=True, host='localhost', port=1988)
