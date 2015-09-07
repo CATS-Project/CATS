@@ -26,18 +26,15 @@ db_name = 'TwitterDB_demo'
 host = 'localhost'
 port = 27017
 queries = Queries(dbname=db_name, host=host, port=port)
+
 can_collect_tweets = False
+
 lda_running = False
 lsa_running = False
 mabed_running = False
 
 app = Flask(__name__)
-
 app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
-
-query = {}
-
-query_pretty = ""
 
 
 @app.route('/cats/login', methods=['GET', 'POST'])
@@ -47,6 +44,7 @@ def login():
         if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
             session['name'] = request.form['username']
             session['query'] = {}
+            session['query_pretty'] = ""
             return collection_dashboard_page()
         else:
             error = 'Invalid Credentials. Please try again.'
@@ -138,8 +136,8 @@ def analysis_dashboard_page():
     keys = ""
     if session['query'].get("words.word"):
         keys = ','.join(session['query']["words.word"].get("$in"))
-    if query.get("date"): 
-        dates = query["date"].get("$gt")+' '+query["date"].get("$lte")
+    if session['query'].get("date"):
+        dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
     return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
 
 
@@ -155,15 +153,14 @@ def analysis_dashboard_page2():
     for word in lem.wordList:
         word_list.append(word.word)
     session['query'] = {}
-    global query_pretty
-    query_pretty = ""
+    session['query_pretty'] = ""
     if word_list:
-        query_pretty += "Keyword filter: "+','.join(word_list)+"<br/>"
+        session['query_pretty'] += "Keyword filter: "+','.join(word_list)+"<br/>"
         session['query']["words.word"] = {"$in": word_list}
     if date:
-        query_pretty += "Date filter: "+date+"<br/>"
+        session['query_pretty'] += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
-        query["date"] = {"$gt": start, "$lte": end}
+        session['query']['date'] = {"$gt": start, "$lte": end}
     if session.get('query'):
         queries.constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
@@ -184,51 +181,51 @@ def construct_vocabulary():
 
 @app.route('/cats/analysis/vocabulary_cloud')
 def get_term_cloud():
-    if query:
+    if session.get('query'):
         voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
     else:
         voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
-    return render_template('word_cloud.html', voc=voc, filter=query_pretty)     
+    return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
 
 
 @app.route('/cats/analysis/vocabulary.csv')
 def get_term_list():
-    if query:
+    if session.get('query'):
         voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
     else:
         voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
     csv = 'word,IDF\n'
-    for doc in voc :
+    for doc in voc:
         print doc['word'], doc['IDF']
         csv += doc['word']+','+str(doc['IDF'])+'\n'
-    return Response(csv,mimetype="text/csv")   
+    return Response(csv, mimetype="text/csv")
 
 
 @app.route('/cats/analysis/tweets', methods=['POST'])
 def get_tweet_list():
     phrase = request.form['cooccurringwords']
-    search = Search(searchPhrase=phrase, dbname=db_name, host=host, port=port, query=query)
+    search = Search(searchPhrase=phrase, dbname=db_name, host=host, port=port, query=session['query'])
     results = search.results()
     for i in range(len(results)):
         result = results[i]
         result['rawText'] = result['rawText'].replace('\\', '')
         results[i] = result
-    return render_template('tweet_browser.html', results=results, filter=query_pretty)
+    return render_template('tweet_browser.html', results=results, filter=session['query_pretty'])
 
 
 @app.route('/cats/analysis/tweets/<term>')
 def get_tweet_list2(term):
-    search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=query)
+    search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=session['query'])
     results = search.results()
     for i in range(len(results)):
         result = results[i]
         result['rawText'] = result['rawText'].replace('\\', '')
         results[i] = result
-    return render_template('tweet_browser.html', results=results, filter=query_pretty)
+    return render_template('tweet_browser.html', results=results, filter=session['query_pretty'])
 
 
 def extract_named_entities(limit=0):
-    return queries.getNamedEntities(query=query, limit=limit)
+    return queries.getNamedEntities(query=session['query'], limit=limit)
 
 
 @app.route('/cats/analysis/named_entities.csv')
@@ -242,7 +239,7 @@ def get_named_entity_list():
 
 @app.route('/cats/analysis/named_entity_cloud')
 def get_named_entity_cloud():
-    return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=query_pretty)
+    return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=session['query_pretty'])
 
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
@@ -260,7 +257,7 @@ def thread_lda(k):
     global lda_running
     lda_running = True
     lda = LDA(dbname=db_name, host=host, port=port)
-    results = lda.apply(query=query, num_topics=k, num_words=10, iterations=500)
+    results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
     for doc in results[1]:
         for topic in doc:
@@ -270,7 +267,7 @@ def thread_lda(k):
         topics.append([i, scores[i], results[0][i]])
     lda_running = False
     pickle.dump(topics, open("lda_topics.p", "wb"))
-    pickle.dump(query_pretty, open("lda_query.p", "wb"))
+    pickle.dump(session['query_pretty'], open("lda_query.p", "wb"))
 
 
 @app.route('/cats/analysis/train_lsa', methods=['POST'])
@@ -288,14 +285,14 @@ def thread_lsa(k):
     global lsa_running
     lsa_running = True
     lsa = LSA(dbname=db_name, host=host, port=port)
-    results = lsa.apply(query=query, num_topics=k, num_words=10)
+    results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
     for i in range(0, k):
         topics.append([i, 0, results[i]])
     lsa_running = False
     pickle.dump(topics, open("lsa_topics.p", "wb"))
-    pickle.dump(query_pretty, open("lsa_query.p", "wb"))
+    pickle.dump(session['query_pretty'], open("lsa_query.p", "wb"))
 
 
 @app.route('/cats/analysis/detect_events', methods=['POST'])
@@ -321,11 +318,11 @@ def thread_mabed(k):
         except Exception, e:
             print e
     mf = MabedFiles(dbname=db_name, host=host, port=port)
-    mf.buildFiles(query, filepath='mabed/input/', slice=60*60)
+    mf.buildFiles(session['query'], filepath='mabed/input/', slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
     mabed_running = False
     pickle.dump(result, open("mabed_events.p", "wb"))
-    pickle.dump(query_pretty, open("mabed_query.p", "wb"))
+    pickle.dump(session['query_pretty'], open("mabed_query.p", "wb"))
 
 
 @app.route('/cats/analysis/lda_topics.csv')
