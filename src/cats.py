@@ -154,8 +154,7 @@ def analysis_dashboard_page2():
     word_list = []
     for word in lem.wordList:
         word_list.append(word.word)
-    global query
-    query = {}
+    session['query'] = {}
     global query_pretty
     query_pretty = ""
     if word_list:
@@ -166,7 +165,7 @@ def analysis_dashboard_page2():
         start, end = date.split(" ") 
         query["date"] = {"$gt": start, "$lte": end}
     if query:
-        queries.constructVocabulary(query=query)
+        queries.constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
     return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
 
@@ -186,18 +185,18 @@ def construct_vocabulary():
 @app.route('/cats/analysis/vocabulary_cloud')
 def get_term_cloud():
     if query:
-        voc = queries.getWords(fields={'word': 1,'IDF': 1}, limit=150, existing=True)
+        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
     else:
-        voc = queries.getWords(fields={'word': 1,'IDF': 1}, limit=150, existing=False)
+        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
     return render_template('word_cloud.html', voc=voc, filter=query_pretty)     
 
 
 @app.route('/cats/analysis/vocabulary.csv')
 def get_term_list():
     if query:
-        voc = queries.getWords(fields={'word': 1,'IDF': 1}, limit=1000, existing=True)
+        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
     else:
-        voc = queries.getWords(fields={'word': 1,'IDF': 1}, limit=1000, existing=False)
+        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
     csv = 'word,IDF\n'
     for doc in voc :
         print doc['word'], doc['IDF']
