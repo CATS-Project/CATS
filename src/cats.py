@@ -45,7 +45,7 @@ def login():
     error = None
     if request.method == 'POST':
         if (request.form['username'] == 'adrien' or request.form['username'] == 'michael') and request.form['password'] == 'test':
-            session['name'] = 'admin'
+            session['name'] = request.form['username']
             return collection_dashboard_page()
         else:
             error = 'Invalid Credentials. Please try again.'
