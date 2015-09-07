@@ -4,7 +4,7 @@ __version__ = "0.1"
 __email__ = "adrien.guille@univ-lyon2.fr"
 __status__ = "Production"
 
-from flask import Flask, Response, render_template, request, url_for, redirect
+from flask import Flask, Response, render_template, request, session, url_for, redirect
 from search_mongo_new import Search
 from nlplib.lemmatize_text import LemmatizeText
 from mllib.train_lda import LDA
@@ -45,6 +45,7 @@ def login():
         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
             error = 'Invalid Credentials. Please try again.'
         else:
+            session['name'] = request.args.get('admin')
             return collection_dashboard_page()
     return render_template('login.html', error=error)
 
@@ -64,7 +65,7 @@ def get_tweet_count():
 
 @app.route('/cats/initialization')
 def initialization_page():
-    return render_template('initialization.html')
+    return render_template('initialization.html', user=session['name'])
 
 
 @app.route('/cats/initialization', methods=['POST'])
