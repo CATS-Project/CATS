@@ -61,7 +61,11 @@ def download_tweets():
 
 
 def get_tweet_count():
-    return queries.countDocuments(query=session['query'])
+    count = queries.countDocuments(query=session['query'])
+    if count > 0:
+        return count+' tweets'
+    else:
+        return 'no match'
 
 
 @app.route('/cats/initialization')
