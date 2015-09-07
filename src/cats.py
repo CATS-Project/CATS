@@ -63,7 +63,7 @@ def download_tweets():
 def get_tweet_count():
     count = queries.countDocuments(query=session['query'])
     if count > 0:
-        return count+' tweets'
+        return str(count)+' tweets'
     else:
         return 'no match'
 
