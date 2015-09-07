@@ -47,7 +47,7 @@ def login():
         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
             error = 'Invalid Credentials. Please try again.'
         else:
-            session['name'] = request.args.get('admin')
+            session['name'] = 'admin'
             return collection_dashboard_page()
     return render_template('login.html', error=error)
 
