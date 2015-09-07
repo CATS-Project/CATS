@@ -73,9 +73,7 @@
 			<form action="{{ url_for('download_tweets') }}" method="POST">
 		    	<input type="submit" value="Download tweets" class="button"/> <input type="checkbox" name="advanced_metadata" value="on"> advanced meta-data
 		    </form>
-
-
-			<a href="{{ url_for('download_tweets') }}"><button>Download tweets</button></a>
+			<br/>
            	<label>{% if tweetCount %} {{ tweetCount }}{% endif %} tweets</label><br/><br/>
 
 		    <h2>Corpus browsing</h2>
