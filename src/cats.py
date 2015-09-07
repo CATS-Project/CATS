@@ -80,13 +80,13 @@ def collection_dashboard_page():
     if can_collect_tweets and os.path.isfile('collecting.lock'):
         lock = open('collecting.lock', 'r').read()
         corpus_info = lock.split(';')
-        return render_template('collection.html', collecting_corpus=corpus_info)
+        return render_template('collection.html', collecting_corpus=corpus_info, user=session['name'])
     elif not can_collect_tweets:
         lock = open('demonstration.info', 'r').read()
         corpus_info = lock.split(';')
-        return render_template('collection.html', collected_corpus=corpus_info)
+        return render_template('collection.html', collected_corpus=corpus_info, user=session['name'])
     else:
-        return render_template('collection.html')
+        return render_template('collection.html', user=session['name'])
 
 
 @app.route('/cats/collection', methods=['POST'])
@@ -139,7 +139,7 @@ def analysis_dashboard_page():
         keys = ','.join(query["words.word"].get("$in"))
     if query.get("date"): 
         dates = query["date"].get("$gt")+' '+query["date"].get("$lte")
-    return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys)
+    return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
 
 
 @app.route('/cats/analysis', methods=['POST'])
@@ -167,7 +167,7 @@ def analysis_dashboard_page2():
     if query:
         queries.constructVocabulary(query=query)
     tweet_count = get_tweet_count()
-    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list))
+    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
 
 
 @app.route('/cats/about')
