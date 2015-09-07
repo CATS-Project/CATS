@@ -44,7 +44,7 @@ query_pretty = ""
 def login():
     error = None
     if request.method == 'POST':
-        if (request.form['username'] == 'adrien' or request.form['username'] == 'michael') and request.form['password'] == 'test':
+        if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
             session['name'] = request.form['username']
             return collection_dashboard_page()
         else:
