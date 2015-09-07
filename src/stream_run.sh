@@ -26,6 +26,6 @@ FILE=$1
 DB=$2
 HOST=$3
 PORT=$4
-python testing_tweets_new.py $FILE $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT $MODE 0
+python testing_tweets.py $FILE $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT $MODE 0
 
 

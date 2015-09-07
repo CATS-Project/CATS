@@ -9,7 +9,7 @@ __status__ = "Production"
 
 import pymongo
 from ne_index import NEIndex
-from vocabulary_index_new import VocabularyIndex
+from vocabulary_index import VocabularyIndex
 
 class Queries:
     def __init__(self, dbname, host='localhost', port=27017):

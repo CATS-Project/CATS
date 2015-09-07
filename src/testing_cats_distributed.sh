@@ -43,9 +43,9 @@ do
 	if [ $j = 0 ]
 	then
 		# need init == 0 to drop the database
-		python testing_tweets_new.py $FILE$j".csv" $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT_0 $MODE $SERIAL
+		python testing_tweets.py $FILE$j".csv" $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT_0 $MODE $SERIAL
 	else
 		# need init == 1 to do incremental insert
-		python testing_tweets_new.py $FILE$j".csv" $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT_1 $MODE $SERIAL
+		python testing_tweets.py $FILE$j".csv" $DELIMITER $HEADER $DB $HOST $PORT $LANGUAGE $INIT_1 $MODE $SERIAL
 	fi
 done;

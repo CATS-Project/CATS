@@ -8,17 +8,18 @@ __email__ = "ciprian.truica@cs.pub.ro"
 __status__ = "Production"
 
 import sys
-from models.mongo_models import *
 from nlplib.lemmatize_text import LemmatizeText
 from nlplib.named_entities import NamedEntitiesRegonizer
 from nlplib.clean_text import CleanText
 from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor
+from indexing.queries import Queries
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 ct = CleanText()
+
 
 # params:
 # elems is list of lists:
@@ -41,10 +42,7 @@ ct = CleanText()
 global mode_global
 global language_global
 
-def populateDatabase(elems, language='EN', dbname='TwitterDB', mode=0, serialized=True):
-    print dbname, mode
-    client = pymongo.MongoClient()
-    db = client[dbname]
+def populateDatabase(elems, language='EN', dbname='TwitterDB', host='localhost', port=27017, mode=0, serialized=True):
     if elems:
         documents = []
         if serialized:
@@ -71,10 +69,8 @@ def populateDatabase(elems, language='EN', dbname='TwitterDB', mode=0, serialize
                     if result:
                         documents.append(result)
         if documents:
-            try:
-                db.documents.insert(documents, continue_on_error=True)
-            except pymongo.errors.DuplicateKeyError:
-                pass
+            queries = Queries(dbname=dbname, host=host, port=port)
+            queries.bulkInsert(documents=documents)
 
 gender = {'male': 1, 'female': 2, 'homme': 1, 'femme': 2}
 # process one element serial
@@ -205,5 +201,3 @@ def processElement_parallel(elem):
         except Exception as e:
             print e
     return document
-
-

@@ -5,7 +5,7 @@ __email__ = "adrien.guille@univ-lyon2.fr"
 __status__ = "Production"
 
 from flask import Flask, Response, render_template, request, session, url_for, redirect
-from search_mongo_new import Search
+from search_mongo import Search
 from nlplib.lemmatize_text import LemmatizeText
 from mllib.train_lda import LDA
 from mllib.train_lsa import LSA
@@ -381,3 +381,5 @@ def browse_events():
 if __name__ == '__main__':
     # Demo
     app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
+    #local
+    #app.run(debug=True, host='localhost', port=5000)
