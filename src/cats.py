@@ -63,7 +63,7 @@ def download_tweets():
 
 
 def get_tweet_count():
-    return queries.countDocuments(query=query)
+    return queries.countDocuments(query=session['query'])
 
 
 @app.route('/cats/initialization')
@@ -164,7 +164,6 @@ def analysis_dashboard_page2():
         query_pretty += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
         query["date"] = {"$gt": start, "$lte": end}
-    print session['query']
     if session.get('query'):
         queries.constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
