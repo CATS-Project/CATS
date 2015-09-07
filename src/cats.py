@@ -49,7 +49,7 @@ def login():
     return render_template('login.html', error=error)
 
 
-@app.route('/cats/analysis/tweets.csv')
+@app.route('/cats/analysis/tweets.csv', methods=['POST'])
 def download_tweets():
     return ""
 
