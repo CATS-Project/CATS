@@ -51,7 +51,8 @@ def login():
 
 @app.route('/cats/analysis/tweets.csv', methods=['POST'])
 def download_tweets():
-    return ""
+    checked_lang = request.form.getlist('advanced_metadata')
+    return checked_lang
 
 
 def get_tweet_count():
