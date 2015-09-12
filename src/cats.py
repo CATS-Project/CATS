@@ -48,7 +48,7 @@ def login():
             return collection_dashboard_page()
         else:
             error = 'Invalid Credentials. Please try again.'
-        return render_template('login.html', error=error)
+    return render_template('login.html', error=error)
 
 
 @app.route('/cats/analysis/tweets.csv', methods=['POST'])
