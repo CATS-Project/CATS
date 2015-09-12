@@ -45,7 +45,7 @@ def login():
             session['name'] = request.form['username']
             session['query'] = {}
             session['query_pretty'] = ""
-            return redirect(url_for('/cats/collection'))
+            return redirect(url_for('collection_dashboard_page'))
         else:
             error = 'Invalid Credentials. Please try again.'
     return render_template('login.html', error=error)
