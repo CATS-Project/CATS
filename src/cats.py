@@ -19,13 +19,18 @@ import pickle
 from streaming.stream import Streaming
 import datetime
 from indexing.queries import Queries
+import sqlite3
 
-# Connecting to the database
 
-db_name = 'TwitterDB_demo'
+# Connecting to the user database
+user_db_filename = 'users.db'
+user_db_conn = sqlite3.connect(user_db_filename)
+
+# Connecting to the tweet database
+tweet_db_name = 'TwitterDB_demo'
 host = 'localhost'
 port = 27017
-queries = Queries(dbname=db_name, host=host, port=port)
+queries = Queries(dbname=tweet_db_name, host=host, port=port)
 
 can_collect_tweets = False
 
@@ -41,7 +46,13 @@ app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 def login():
     error = None
     if request.method == 'POST':
-        if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
+        with sqlite3.connect(user_db_filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute("select password from user where username = '"+request.form['username']+"'")
+            password = ''
+            for row in cursor.fetchall():
+                password = row
+        if request.form['password'] == password:
             session['name'] = request.form['username']
             session['query'] = {}
             session['query_pretty'] = ""
@@ -134,7 +145,7 @@ def collection_dashboard_page2():
 
 
 def collection_thread(duration, keywords, users, location, language):
-    s = Streaming(dbname=db_name)
+    s = Streaming(dbname=tweet_db_name)
     s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 
@@ -222,7 +233,7 @@ def get_term_list():
 @app.route('/cats/analysis/tweets', methods=['POST'])
 def get_tweet_list():
     phrase = request.form['cooccurringwords']
-    search = Search(searchPhrase=phrase, dbname=db_name, host=host, port=port, query=session['query'])
+    search = Search(searchPhrase=phrase, dbname=tweet_db_name, host=host, port=port, query=session['query'])
     results = search.results()
     for i in range(len(results)):
         result = results[i]
@@ -234,7 +245,7 @@ def get_tweet_list():
 @app.route('/cats/analysis/tweets/<term>')
 def get_tweet_list2(term):
     if session.get('name') is not None:
-        search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=session['query'])
+        search = Search(searchPhrase=term, dbname=tweet_db_name, host=host, port=port, query=session['query'])
         results = search.results()
         for i in range(len(results)):
             result = results[i]
@@ -283,7 +294,7 @@ def train_lda():
 def thread_lda(k):
     global lda_running
     lda_running = True
-    lda = LDA(dbname=db_name, host=host, port=port)
+    lda = LDA(dbname=tweet_db_name, host=host, port=port)
     results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
     for doc in results[1]:
@@ -311,7 +322,7 @@ def train_lsa():
 def thread_lsa(k):
     global lsa_running
     lsa_running = True
-    lsa = LSA(dbname=db_name, host=host, port=port)
+    lsa = LSA(dbname=tweet_db_name, host=host, port=port)
     results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
@@ -344,7 +355,7 @@ def thread_mabed(k):
             elif os.path.isdir(file_path): shutil.rmtree(file_path)
         except Exception, e:
             print e
-    mf = MabedFiles(dbname=db_name, host=host, port=port)
+    mf = MabedFiles(dbname=tweet_db_name, host=host, port=port)
     mf.buildFiles(session['query'], filepath='mabed/input/', slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
     mabed_running = False
@@ -413,6 +424,8 @@ def browse_events():
         
 if __name__ == '__main__':
     # Demo
+
+
     app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
     #local
     #app.run(debug=True, host='localhost', port=1988)

@@ -1,0 +1,4 @@
+create table user (
+    username        text primary key,
+    password    text
+);
