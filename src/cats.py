@@ -40,15 +40,18 @@ app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 @app.route('/cats/login', methods=['GET', 'POST'])
 def login():
     error = None
-    if request.method == 'POST':
-        if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
-            session['name'] = request.form['username']
-            session['query'] = {}
-            session['query_pretty'] = ""
-            return collection_dashboard_page()
-        else:
-            error = 'Invalid Credentials. Please try again.'
-    return render_template('login.html', error=error)
+    if session['name'] is None:
+        if request.method == 'POST':
+            if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
+                session['name'] = request.form['username']
+                session['query'] = {}
+                session['query_pretty'] = ""
+                return collection_dashboard_page()
+            else:
+                error = 'Invalid Credentials. Please try again.'
+        return render_template('login.html', error=error)
+    else:
+        return collection_dashboard_page()
 
 
 @app.route('/cats/analysis/tweets.csv', methods=['POST'])
@@ -70,7 +73,10 @@ def get_tweet_count():
 
 @app.route('/cats/initialization')
 def initialization_page():
-    return render_template('initialization.html', user=session['name'])
+    if session['name'] is not None:
+        return render_template('initialization.html', user=session['name'])
+    else:
+        return login()
 
 
 @app.route('/cats/initialization', methods=['POST'])
@@ -80,16 +86,19 @@ def initialization_page2():
 
 @app.route('/cats/collection')
 def collection_dashboard_page():
-    if can_collect_tweets and os.path.isfile('collecting.lock'):
-        lock = open('collecting.lock', 'r').read()
-        corpus_info = lock.split(';')
-        return render_template('collection.html', collecting_corpus=corpus_info, user=session['name'])
-    elif not can_collect_tweets:
-        lock = open('demonstration.info', 'r').read()
-        corpus_info = lock.split(';')
-        return render_template('collection.html', collected_corpus=corpus_info, user=session['name'])
+    if session['name'] is not None:
+        if can_collect_tweets and os.path.isfile('collecting.lock'):
+            lock = open('collecting.lock', 'r').read()
+            corpus_info = lock.split(';')
+            return render_template('collection.html', collecting_corpus=corpus_info, user=session['name'])
+        elif not can_collect_tweets:
+            lock = open('demonstration.info', 'r').read()
+            corpus_info = lock.split(';')
+            return render_template('collection.html', collected_corpus=corpus_info, user=session['name'])
+        else:
+            return render_template('collection.html', user=session['name'])
     else:
-        return render_template('collection.html', user=session['name'])
+        return login()
 
 
 @app.route('/cats/collection', methods=['POST'])
@@ -134,15 +143,17 @@ def collection_thread(duration, keywords, users, location, language):
 
 @app.route('/cats/analysis')
 def analysis_dashboard_page():
-    print db_name
-    tweet_count = get_tweet_count()
-    dates = ""
-    keys = ""
-    if session['query'].get("words.word"):
-        keys = ','.join(session['query']["words.word"].get("$in"))
-    if session['query'].get("date"):
-        dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
-    return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
+    if session['name'] is not None:
+        tweet_count = get_tweet_count()
+        dates = ""
+        keys = ""
+        if session['query'].get("words.word"):
+            keys = ','.join(session['query']["words.word"].get("$in"))
+        if session['query'].get("date"):
+            dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
+        return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
+    else:
+        return login()
 
 
 @app.route('/cats/analysis', methods=['POST'])
@@ -185,24 +196,30 @@ def construct_vocabulary():
 
 @app.route('/cats/analysis/vocabulary_cloud')
 def get_term_cloud():
-    if session.get('query'):
-        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
+    if session['name'] is not None:
+        if session.get('query'):
+            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
+        else:
+            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
+        return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
     else:
-        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
-    return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
+        return login()
 
 
 @app.route('/cats/analysis/vocabulary.csv')
 def get_term_list():
-    if session.get('query'):
-        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
+    if session['name'] is not None:
+        if session.get('query'):
+            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
+        else:
+            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
+        csv = 'word,IDF\n'
+        for doc in voc:
+            print doc['word'], doc['IDF']
+            csv += doc['word']+','+str(doc['IDF'])+'\n'
+        return Response(csv, mimetype="text/csv")
     else:
-        voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
-    csv = 'word,IDF\n'
-    for doc in voc:
-        print doc['word'], doc['IDF']
-        csv += doc['word']+','+str(doc['IDF'])+'\n'
-    return Response(csv, mimetype="text/csv")
+        return login()
 
 
 @app.route('/cats/analysis/tweets', methods=['POST'])
@@ -219,13 +236,16 @@ def get_tweet_list():
 
 @app.route('/cats/analysis/tweets/<term>')
 def get_tweet_list2(term):
-    search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=session['query'])
-    results = search.results()
-    for i in range(len(results)):
-        result = results[i]
-        result['rawText'] = result['rawText'].replace('\\', '')
-        results[i] = result
-    return render_template('tweet_browser.html', results=results, filter=session['query_pretty'])
+    if session['name'] is not None:
+        search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=session['query'])
+        results = search.results()
+        for i in range(len(results)):
+            result = results[i]
+            result['rawText'] = result['rawText'].replace('\\', '')
+            results[i] = result
+        return render_template('tweet_browser.html', results=results, filter=session['query_pretty'])
+    else:
+        return login()
 
 
 def extract_named_entities(limit=0):
@@ -234,16 +254,22 @@ def extract_named_entities(limit=0):
 
 @app.route('/cats/analysis/named_entities.csv')
 def get_named_entity_list():
-    cursor = extract_named_entities()
-    csv = 'named_entity,count,type\n'
-    for elem in cursor:
-        csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
-    return Response(csv, mimetype="text/csv")
+    if session['name'] is not None:
+        cursor = extract_named_entities()
+        csv = 'named_entity,count,type\n'
+        for elem in cursor:
+            csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
+        return Response(csv, mimetype="text/csv")
+    else:
+        return login()
 
 
 @app.route('/cats/analysis/named_entity_cloud')
 def get_named_entity_cloud():
-    return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=session['query_pretty'])
+    if session['name'] is not None:
+        return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=session['query_pretty'])
+    else:
+        return login()
 
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
@@ -336,14 +362,17 @@ def get_lda_topics():
 
 @app.route('/cats/analysis/lda_topic_browser')
 def browse_lda_topics():
-    if lda_running:
-        return render_template('waiting.html', method_name='LDA')
-    elif os.path.isfile('lda_topics.p'):
-        r = pickle.load(open("lda_topics.p", "rb"))
-        qp = pickle.load(open("lda_query.p", "rb"))
-        return render_template('topic_browser.html', topics=r, filter=qp)
+    if session['name'] is not None:
+        if lda_running:
+            return render_template('waiting.html', method_name='LDA')
+        elif os.path.isfile('lda_topics.p'):
+            r = pickle.load(open("lda_topics.p", "rb"))
+            qp = pickle.load(open("lda_query.p", "rb"))
+            return render_template('topic_browser.html', topics=r, filter=qp)
+        else:
+            return render_template('unavailable.html', method_name='LDA')
     else:
-        return render_template('unavailable.html', method_name='LDA')
+        return login()
 
 
 @app.route('/cats/analysis/lsa_topics.csv')
@@ -353,14 +382,17 @@ def get_lsa_topics():
 
 @app.route('/cats/analysis/lsa_topic_browser')
 def browse_lsa_topics():
-    if lsa_running:
-        return render_template('waiting.html', method_name='LSA')
-    elif os.path.isfile('lsa_topics.p'):
-        r = pickle.load(open("lsa_topics.p", "rb"))
-        qp = pickle.load(open("lsa_query.p", "rb"))
-        return render_template('topic_browser.html', topics=r, filter=qp)
+    if session['name'] is not None:
+        if lsa_running:
+            return render_template('waiting.html', method_name='LSA')
+        elif os.path.isfile('lsa_topics.p'):
+            r = pickle.load(open("lsa_topics.p", "rb"))
+            qp = pickle.load(open("lsa_query.p", "rb"))
+            return render_template('topic_browser.html', topics=r, filter=qp)
+        else:
+            return render_template('unavailable.html', method_name='LSA')
     else:
-        return render_template('unavailable.html', method_name='LSA')
+        login()
 
 
 @app.route('/cats/analysis/mabed_events.csv')
@@ -370,14 +402,17 @@ def get_events():
 
 @app.route('/cats/analysis/mabed_event_browser')
 def browse_events():
-    if mabed_running:
-        return render_template('waiting.html', method_name='MABED')
-    elif os.path.isfile('mabed_events.p'):
-        r = pickle.load(open("mabed_events.p", "rb"))
-        qp = pickle.load(open("mabed_query.p", "rb"))
-        return render_template('event_browser.html', events=r, filter=qp)
+    if session['name'] is not None:
+        if mabed_running:
+            return render_template('waiting.html', method_name='MABED')
+        elif os.path.isfile('mabed_events.p'):
+            r = pickle.load(open("mabed_events.p", "rb"))
+            qp = pickle.load(open("mabed_query.p", "rb"))
+            return render_template('event_browser.html', events=r, filter=qp)
+        else:
+            return render_template('unavailable.html', method_name='MABED')
     else:
-        return render_template('unavailable.html', method_name='MABED')
+        return login()
         
 if __name__ == '__main__':
     # Demo

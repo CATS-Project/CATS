@@ -11,8 +11,10 @@ import subprocess
 
 tweets_per_file = 500
 
+
 def quote(string):
     return '"'+string.encode('utf-8')+'"'
+
 
 class Streaming:
     def __init__(self, dbname='TwitterDBTest', host='localhost', port=27017):
