@@ -73,7 +73,7 @@ def get_tweet_count():
 
 @app.route('/cats/initialization')
 def initialization_page():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         return render_template('initialization.html', user=session['name'])
     else:
         return login()
@@ -86,7 +86,7 @@ def initialization_page2():
 
 @app.route('/cats/collection')
 def collection_dashboard_page():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if can_collect_tweets and os.path.isfile('collecting.lock'):
             lock = open('collecting.lock', 'r').read()
             corpus_info = lock.split(';')
@@ -143,7 +143,7 @@ def collection_thread(duration, keywords, users, location, language):
 
 @app.route('/cats/analysis')
 def analysis_dashboard_page():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         tweet_count = get_tweet_count()
         dates = ""
         keys = ""
@@ -196,7 +196,7 @@ def construct_vocabulary():
 
 @app.route('/cats/analysis/vocabulary_cloud')
 def get_term_cloud():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if session.get('query'):
             voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
         else:
@@ -208,7 +208,7 @@ def get_term_cloud():
 
 @app.route('/cats/analysis/vocabulary.csv')
 def get_term_list():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if session.get('query'):
             voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
         else:
@@ -236,7 +236,7 @@ def get_tweet_list():
 
 @app.route('/cats/analysis/tweets/<term>')
 def get_tweet_list2(term):
-    if session['name'] is not None:
+    if session.get('name') is not None:
         search = Search(searchPhrase=term, dbname=db_name, host=host, port=port, query=session['query'])
         results = search.results()
         for i in range(len(results)):
@@ -254,7 +254,7 @@ def extract_named_entities(limit=0):
 
 @app.route('/cats/analysis/named_entities.csv')
 def get_named_entity_list():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         cursor = extract_named_entities()
         csv = 'named_entity,count,type\n'
         for elem in cursor:
@@ -266,7 +266,7 @@ def get_named_entity_list():
 
 @app.route('/cats/analysis/named_entity_cloud')
 def get_named_entity_cloud():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=session['query_pretty'])
     else:
         return login()
@@ -362,7 +362,7 @@ def get_lda_topics():
 
 @app.route('/cats/analysis/lda_topic_browser')
 def browse_lda_topics():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if lda_running:
             return render_template('waiting.html', method_name='LDA')
         elif os.path.isfile('lda_topics.p'):
@@ -382,7 +382,7 @@ def get_lsa_topics():
 
 @app.route('/cats/analysis/lsa_topic_browser')
 def browse_lsa_topics():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if lsa_running:
             return render_template('waiting.html', method_name='LSA')
         elif os.path.isfile('lsa_topics.p'):
@@ -402,7 +402,7 @@ def get_events():
 
 @app.route('/cats/analysis/mabed_event_browser')
 def browse_events():
-    if session['name'] is not None:
+    if session.get('name') is not None:
         if mabed_running:
             return render_template('waiting.html', method_name='MABED')
         elif os.path.isfile('mabed_events.p'):
