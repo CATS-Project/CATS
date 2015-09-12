@@ -40,7 +40,7 @@ app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 @app.route('/cats/login', methods=['GET', 'POST'])
 def login():
     error = None
-    if session['name'] is None:
+    if session.get('name') is None:
         if request.method == 'POST':
             if (request.form['username'] == 'adrien' or request.form['username'] == 'michael' or request.form['username'] == 'ciprian') and request.form['password'] == 'test':
                 session['name'] = request.form['username']
