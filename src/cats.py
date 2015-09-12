@@ -22,11 +22,10 @@ from indexing.queries import Queries
 import sqlite3
 
 
-# Connecting to the user database
+# User database
 user_db_filename = 'users.db'
-user_db_conn = sqlite3.connect(user_db_filename)
 
-# Connecting to the tweet database
+# Tweet database
 tweet_db_name = 'TwitterDB_demo'
 host = 'localhost'
 port = 27017
@@ -50,15 +49,16 @@ def login():
             cursor = conn.cursor()
             cursor.execute("select password from user where username = '"+request.form['username']+"'")
             password = ''
-            for row in cursor.fetchall():
-                password = row
-        if request.form['password'] == password:
-            session['name'] = request.form['username']
-            session['query'] = {}
-            session['query_pretty'] = ""
-            return redirect(url_for('collection_dashboard_page'))
-        else:
-            error = 'Invalid Credentials. Please try again.'
+            row = cursor.fetchone()
+            if row is not None:
+                password = row[0]
+                if request.form['password'] == password:
+                    session['name'] = request.form['username']
+                    session['query'] = {}
+                    session['query_pretty'] = ""
+                    return redirect(url_for('collection_dashboard_page'))
+                else:
+                    error = 'Invalid Credentials. Please try again.'
     return render_template('login.html', error=error)
 
 
@@ -424,8 +424,5 @@ def browse_events():
         
 if __name__ == '__main__':
     # Demo
-
-
     app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
-    #local
-    #app.run(debug=True, host='localhost', port=1988)
+
