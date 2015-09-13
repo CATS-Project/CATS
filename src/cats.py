@@ -26,6 +26,7 @@ import sqlite3
 user_db_filename = 'users.db'
 
 # Tweet database
+queries = {}
 host = 'localhost'
 port = 27017
 
@@ -59,7 +60,7 @@ def login():
                     session['query'] = {}
                     session['query_pretty'] = ""
                     session['can_collect_tweets'] = row[1]
-                    session['queries'] = Queries(dbname=session['name'], host=host, port=port)
+                    queries[session['name']] = Queries(dbname=session['name'], host=host, port=port)
                     print session['name'], 'can collect tweets:', session['can_collect_tweets']
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
                     row = cursor.fetchone()
@@ -83,7 +84,7 @@ def download_tweets():
 
 
 def get_tweet_count():
-    count = session['queries'].countDocuments(query=session['query'])
+    count = queries[session['name']].countDocuments(query=session['query'])
     if count > 0:
         return str(count)+' tweets'
     else:
@@ -216,7 +217,7 @@ def about_page():
 @app.route('/cats/analysis/construct_vocabulary')
 def construct_vocabulary():
     print("constructing vocab")	
-    session['queries'].constructVocabulary()
+    queries[session['name']].constructVocabulary()
     return analysis_dashboard_page()
 
 
@@ -224,9 +225,9 @@ def construct_vocabulary():
 def get_term_cloud():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
         else:
-            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
         return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
     else:
         return redirect(url_for('login'))
@@ -236,9 +237,9 @@ def get_term_cloud():
 def get_term_list():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
         else:
-            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
         csv = 'word,IDF\n'
         for doc in voc:
             print doc['word'], doc['IDF']
@@ -275,7 +276,7 @@ def get_tweet_list2(term):
 
 
 def extract_named_entities(limit=0):
-    return session['queries'].getNamedEntities(query=session['query'], limit=limit)
+    return queries[session['name']].getNamedEntities(query=session['query'], limit=limit)
 
 
 @app.route('/cats/analysis/named_entities.csv')
