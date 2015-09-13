@@ -13,7 +13,7 @@ with sqlite3.connect(db_filename) as conn:
             schema = f.read()
         conn.executescript(schema)
 
-        print 'Inserting test users'
+        print 'Inserting default data'
         
         conn.execute("""
         insert into user (username, password, can_collect_tweets)
@@ -23,6 +23,11 @@ with sqlite3.connect(db_filename) as conn:
         conn.execute("""
         insert into user (username, password, can_collect_tweets)
         values ('michael', 'test', 'True')
+        """)
+
+        conn.execute("""
+        insert into collection (username, start, duration, language, keyword, location, user, running)
+        values ('demo', '2015-04-06', '60', 'English', 'None', '49.186288,0.043709,53.186288,-8.043709', 'None', 'False')
         """)
     else:
         print 'Database exists, assume schema does, too.'

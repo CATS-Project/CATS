@@ -19,5 +19,6 @@ create table collection (
     language    text,
     keyword text,
     location    text,
-    user    text
+    user    text,
+    running text
 );

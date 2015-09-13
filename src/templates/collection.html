@@ -65,28 +65,35 @@
 		    </form>
 
 		    <h2>Corpus being collected</h2>
-			{% if not collecting_corpus %}
+			{% if not corpus_info %}
 				<p>No corpus being currently collected.</p>
 			{% else %}
-				<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
-				<p><a href="analysis">Analyze this corpus</a></p>
-				<li>Collection started: {{ collecting_corpus[0] }}</li>
-				<li>Duration: {{ collecting_corpus[1] }}</li>
-				<li>Keyword filter: {{ collecting_corpus[2] }}</li>
-				<li>Location filter: {{ collecting_corpus[3] }}</li>
-				<li>User filter: {{ collecting_corpus[4] }}</li>
+				{% if corpus_info[7] == 'True' %}
+					<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
+					<p><a href="analysis">Analyze this corpus</a></p>
+					<li>Collection started: {{ collecting_corpus[1] }}</li>
+					<li>Duration: {{ collecting_corpus[2] }}</li>
+					<li>Language: {{ collecting_corpus[3] }}</li>
+					<li>Keyword filter: {{ collecting_corpus[4] }}</li>
+					<li>Location filter: {{ collecting_corpus[5] }}</li>
+					<li>User filter: {{ collecting_corpus[6] }}</li>
+				{% endif %}
 			{% endif %}
 
 		    <h2>Already collected corpus</h2>
-			{% if not collected_corpus %}
+			{% if not corpus_info %}
 				<p>No corpus available.</p>
 			{% else %}
-				<p><a href="analysis">Analyze this corpus</a></p>
-				<li>Collection started: {{ collected_corpus[0] }}</li>
-				<li>Duration: {{ collected_corpus[1] }}</li>
-				<li>Keyword filter: {{ collected_corpus[2] }}</li>
-				<li>Location filter: {{ collected_corpus[3] }}</li>
-				<li>User filter: {{ collected_corpus[4] }}</li>
+				{% if corpus_info[7] == 'False' %}
+					<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
+					<p><a href="analysis">Analyze this corpus</a></p>
+					<li>Collection started: {{ collecting_corpus[1] }}</li>
+					<li>Duration: {{ collecting_corpus[2] }}</li>
+					<li>Language: {{ collecting_corpus[3] }}</li>
+					<li>Keyword filter: {{ collecting_corpus[4] }}</li>
+					<li>Location filter: {{ collecting_corpus[5] }}</li>
+					<li>User filter: {{ collecting_corpus[6] }}</li>
+				{% endif %}
 			{% endif %}
 			</li>
 		</div>

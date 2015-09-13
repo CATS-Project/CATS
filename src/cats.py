@@ -114,16 +114,14 @@ def initialization_page():
 @app.route('/cats/collection')
 def collection_dashboard_page():
     if session.get('name') is not None:
-        if session['can_collect_tweets'] == 'True' and os.path.isfile('collecting.lock'):
-            lock = open('collecting.lock', 'r').read()
-            corpus_info = lock.split(';')
-            return render_template('collection.html', collecting_corpus=corpus_info, user=session['name'])
-        elif session['can_collect_tweets'] == 'False':
-            lock = open('demonstration.info', 'r').read()
-            corpus_info = lock.split(';')
-            return render_template('collection.html', collected_corpus=corpus_info, user=session['name'])
-        else:
-            return render_template('collection.html', user=session['name'])
+        corpus_info = None
+        with sqlite3.connect(user_db_filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute("select * from collection where username = '"+request.form['username']+"'")
+            row = cursor.fetchone()
+            if row is not None:
+                corpus_info = row
+        return render_template('collection.html', corpus_info=corpus_info, user=session['name'])
     else:
         return redirect(url_for('login'))
 
