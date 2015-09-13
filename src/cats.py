@@ -58,7 +58,7 @@ def login():
                     session['can_collect_tweets'] = bool(row[1])
                     print session['name'], 'can collect tweets:', session['can_collect_tweets']
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
-                    row = cursor.fetone()
+                    row = cursor.fetchone()
                     if session['can_collect_tweets'] and row is None:
                         print session['name'], ' needs to provides access tokens'
                         return redirect(url_for('initialization_page'))
