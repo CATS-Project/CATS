@@ -85,7 +85,6 @@
 				<p>No corpus available.</p>
 			{% else %}
 				{% if corpus_info[6] == 'False' %}
-					<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
 					<p><a href="analysis">Analyze this corpus</a></p>
 					<li>Collection started: {{ corpus_info[0] }}</li>
 					<li>Duration: {{ corpus_info[1] }}</li>
