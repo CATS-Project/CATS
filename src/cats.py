@@ -91,28 +91,24 @@ def get_tweet_count():
         return 'no match'
 
 
-@app.route('/cats/initialization')
+@app.route('/cats/initialization', methods=['GET', 'POST'])
 def initialization_page():
     if session.get('name') is not None:
-        return render_template('initialization.html', user=session['name'])
+        error = None
+        if request.method == 'POST':
+            consumer_key = request.form['consumer-key']
+            consumer_secret = request.form['consumer-secret']
+            token = request.form['token']
+            token_secret = request.form['token-secret']
+            if consumer_key != '' and consumer_secret != '' and token != '' and token_secret != '':
+                with sqlite3.connect(user_db_filename) as conn:
+                    conn.execute("insert into oauth (username, consumer_key, consumer_secret, token, token_secret) values ('"+session['name']+"','"+consumer_key+"','"+consumer_secret+"','"+token+"','"+token_secret+"')")
+                    return redirect(url_for('collection_dashboard_page'))
+            else:
+                error = 'Invalid tokens. Please try again.'
+        return render_template('initialization.html', user=session['name'], error=error)
     else:
         return redirect(url_for('login'))
-
-
-@app.route('/cats/initialization', methods=['POST'])
-def initialization_page2():
-    error = None
-    consumer_key = request.form['consumer-key']
-    consumer_secret = request.form['consumer-secret']
-    token = request.form['token']
-    token_secret = request.form['token-secret']
-    if consumer_key != '' and consumer_secret != '' and token != '' and token_secret != '':
-        with sqlite3.connect(user_db_filename) as conn:
-            conn.execute("insert into oauth (username, consumer_key, consumer_secret, token, token_secret) values ('"+session['name']+"','"+consumer_key+"','"+consumer_secret+"','"+token+"','"+token_secret+"')")
-            return redirect(url_for('collection_dashboard_page'))
-    else:
-        error = 'Invalid tokens. Please try again.'
-        return redirect(url_for('initialization_page'), error=error)
 
 
 @app.route('/cats/collection')
