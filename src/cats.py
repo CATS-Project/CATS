@@ -26,10 +26,8 @@ import sqlite3
 user_db_filename = 'users.db'
 
 # Tweet database
-tweet_db_name = 'TwitterDB_demo'
 host = 'localhost'
 port = 27017
-queries = Queries(dbname=tweet_db_name, host=host, port=port)
 
 can_collect_tweets = False
 
@@ -61,6 +59,7 @@ def login():
                     session['query'] = {}
                     session['query_pretty'] = ""
                     session['can_collect_tweets'] = row[1]
+                    session['queries'] = Queries(dbname=session['name'], host=host, port=port)
                     print session['name'], 'can collect tweets:', session['can_collect_tweets']
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
                     row = cursor.fetchone()
@@ -84,7 +83,7 @@ def download_tweets():
 
 
 def get_tweet_count():
-    count = queries.countDocuments(query=session['query'])
+    count = session['queries'].countDocuments(query=session['query'])
     if count > 0:
         return str(count)+' tweets'
     else:
@@ -164,7 +163,7 @@ def collection_dashboard_page2():
 
 
 def collection_thread(duration, keywords, users, location, language):
-    s = Streaming(dbname=tweet_db_name)
+    s = Streaming(dbname=session['name'])
     s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 
@@ -217,7 +216,7 @@ def about_page():
 @app.route('/cats/analysis/construct_vocabulary')
 def construct_vocabulary():
     print("constructing vocab")	
-    queries.constructVocabulary()
+    session['queries'].constructVocabulary()
     return analysis_dashboard_page()
 
 
@@ -225,9 +224,9 @@ def construct_vocabulary():
 def get_term_cloud():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
+            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
         else:
-            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
+            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
         return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
     else:
         return redirect(url_for('login'))
@@ -237,9 +236,9 @@ def get_term_cloud():
 def get_term_list():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
+            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
         else:
-            voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
+            voc = session['queries'].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
         csv = 'word,IDF\n'
         for doc in voc:
             print doc['word'], doc['IDF']
@@ -252,7 +251,7 @@ def get_term_list():
 @app.route('/cats/analysis/tweets', methods=['POST'])
 def get_tweet_list():
     phrase = request.form['cooccurringwords']
-    search = Search(searchPhrase=phrase, dbname=tweet_db_name, host=host, port=port, query=session['query'])
+    search = Search(searchPhrase=phrase, dbname=session['name'], host=host, port=port, query=session['query'])
     results = search.results()
     for i in range(len(results)):
         result = results[i]
@@ -264,7 +263,7 @@ def get_tweet_list():
 @app.route('/cats/analysis/tweets/<term>')
 def get_tweet_list2(term):
     if session.get('name') is not None:
-        search = Search(searchPhrase=term, dbname=tweet_db_name, host=host, port=port, query=session['query'])
+        search = Search(searchPhrase=term, dbname=session['name'], host=host, port=port, query=session['query'])
         results = search.results()
         for i in range(len(results)):
             result = results[i]
@@ -276,7 +275,7 @@ def get_tweet_list2(term):
 
 
 def extract_named_entities(limit=0):
-    return queries.getNamedEntities(query=session['query'], limit=limit)
+    return session['queries'].getNamedEntities(query=session['query'], limit=limit)
 
 
 @app.route('/cats/analysis/named_entities.csv')
@@ -313,7 +312,7 @@ def train_lda():
 def thread_lda(k):
     global lda_running
     lda_running = True
-    lda = LDA(dbname=tweet_db_name, host=host, port=port)
+    lda = LDA(dbname=session['name'], host=host, port=port)
     results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
     for doc in results[1]:
@@ -341,7 +340,7 @@ def train_lsa():
 def thread_lsa(k):
     global lsa_running
     lsa_running = True
-    lsa = LSA(dbname=tweet_db_name, host=host, port=port)
+    lsa = LSA(dbname=session['name'], host=host, port=port)
     results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
@@ -374,7 +373,7 @@ def thread_mabed(k):
             elif os.path.isdir(file_path): shutil.rmtree(file_path)
         except Exception, e:
             print e
-    mf = MabedFiles(dbname=tweet_db_name, host=host, port=port)
+    mf = MabedFiles(dbname=session['name'], host=host, port=port)
     mf.buildFiles(session['query'], filepath='mabed/input/', slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
     mabed_running = False
