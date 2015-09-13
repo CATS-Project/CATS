@@ -84,7 +84,7 @@ def initialization_page():
     if session.get('name') is not None:
         return render_template('initialization.html', user=session['name'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/initialization', methods=['POST'])
@@ -106,7 +106,7 @@ def collection_dashboard_page():
         else:
             return render_template('collection.html', user=session['name'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/collection', methods=['POST'])
@@ -161,7 +161,7 @@ def analysis_dashboard_page():
             dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
         return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis', methods=['POST'])
@@ -211,7 +211,7 @@ def get_term_cloud():
             voc = queries.getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
         return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis/vocabulary.csv')
@@ -227,7 +227,7 @@ def get_term_list():
             csv += doc['word']+','+str(doc['IDF'])+'\n'
         return Response(csv, mimetype="text/csv")
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis/tweets', methods=['POST'])
@@ -253,7 +253,7 @@ def get_tweet_list2(term):
             results[i] = result
         return render_template('tweet_browser.html', results=results, filter=session['query_pretty'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 def extract_named_entities(limit=0):
@@ -269,7 +269,7 @@ def get_named_entity_list():
             csv += elem['entity'].encode('utf8')+','+str(elem['count'])+','+elem['type']+'\n'
         return Response(csv, mimetype="text/csv")
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis/named_entity_cloud')
@@ -277,7 +277,7 @@ def get_named_entity_cloud():
     if session.get('name') is not None:
         return render_template('named_entity_cloud.html', ne=extract_named_entities(250), filter=session['query_pretty'])
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
@@ -380,7 +380,7 @@ def browse_lda_topics():
         else:
             return render_template('unavailable.html', method_name='LDA')
     else:
-        return login()
+        return redirect(url_for('login'))
 
 
 @app.route('/cats/analysis/lsa_topics.csv')
@@ -420,7 +420,7 @@ def browse_events():
         else:
             return render_template('unavailable.html', method_name='MABED')
     else:
-        return login()
+        return redirect(url_for('login'))
         
 if __name__ == '__main__':
     # Demo
