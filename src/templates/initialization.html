@@ -51,6 +51,9 @@
 				<br/>
 				<input type="submit" value="Save tokens and start using CATS" class="button"/>
 		    </form>
+			{% if error %}
+				<p>Error: {{ error }}</p>
+      		{% endif %}
 		</div>
 		
 		<div class="clear"></div>

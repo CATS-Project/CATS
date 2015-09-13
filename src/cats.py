@@ -41,6 +41,11 @@ app = Flask(__name__)
 app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 
 
+@app.route('/cats')
+def index():
+    return ""
+
+
 @app.route('/cats/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -65,7 +70,7 @@ def login():
                     else:
                         return redirect(url_for('collection_dashboard_page'))
                 else:
-                    error = 'Invalid Credentials. Please try again.'
+                    error = 'Invalid credentials. Please try again.'
     return render_template('login.html', error=error)
 
 
@@ -96,7 +101,18 @@ def initialization_page():
 
 @app.route('/cats/initialization', methods=['POST'])
 def initialization_page2():
-    return render_template('initialization.html')
+    error = None
+    consumer_key = request.form['consumer-key']
+    consumer_secret = request.form['consumer-secret']
+    token = request.form['token']
+    token_secret = request.form['token-secret']
+    if consumer_key != '' and consumer_secret != '' and token != '' and token_secret != '':
+        with sqlite3.connect(user_db_filename) as conn:
+            conn.execute("insert into oauth (username, consumer_key, consumer_secret, token, token_secret) values ('"+session['name']+"','"+consumer_key+"','"+consumer_secret+"','"+token+"','"+token_secret+"')")
+            return redirect(url_for('collection_dashboard_page'))
+    else:
+        error = 'Invalid tokens. Please try again.'
+        return redirect(url_for('initialization_page'), error=error)
 
 
 @app.route('/cats/collection')
