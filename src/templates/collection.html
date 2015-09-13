@@ -68,15 +68,15 @@
 			{% if not corpus_info %}
 				<p>No corpus being currently collected.</p>
 			{% else %}
-				{% if corpus_info[7] == 'True' %}
+				{% if corpus_info[6] == 'True' %}
 					<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
 					<p><a href="analysis">Analyze this corpus</a></p>
-					<li>Collection started: {{ corpus_info[1] }}</li>
-					<li>Duration: {{ corpus_info[2] }}</li>
-					<li>Language: {{ corpus_info[3] }}</li>
-					<li>Keyword filter: {{ corpus_info[4] }}</li>
-					<li>Location filter: {{ corpus_info[5] }}</li>
-					<li>User filter: {{ corpus_info[6] }}</li>
+					<li>Collection started: {{ corpus_info[0] }}</li>
+					<li>Duration: {{ corpus_info[1] }}</li>
+					<li>Language: {{ corpus_info[2] }}</li>
+					<li>Keyword filter: {{ corpus_info[3] }}</li>
+					<li>Location filter: {{ corpus_info[4] }}</li>
+					<li>User filter: {{ corpus_info[5] }}</li>
 				{% endif %}
 			{% endif %}
 
@@ -84,15 +84,15 @@
 			{% if not corpus_info %}
 				<p>No corpus available.</p>
 			{% else %}
-				{% if corpus_info[7] == 'False' %}
+				{% if corpus_info[6] == 'False' %}
 					<p>A corpus is being collected right now. The analysis dashboard will be updated daily at midnight with the latest tweets until the collection is over.</p>
 					<p><a href="analysis">Analyze this corpus</a></p>
-					<li>Collection started: {{ corpus_info[1] }}</li>
-					<li>Duration: {{ corpus_info[2] }}</li>
-					<li>Language: {{ corpus_info[3] }}</li>
-					<li>Keyword filter: {{ corpus_info[4] }}</li>
-					<li>Location filter: {{ corpus_info[5] }}</li>
-					<li>User filter: {{ corpus_info[6] }}</li>
+					<li>Collection started: {{ corpus_info[0] }}</li>
+					<li>Duration: {{ corpus_info[1] }}</li>
+					<li>Language: {{ corpus_info[2] }}</li>
+					<li>Keyword filter: {{ corpus_info[3] }}</li>
+					<li>Location filter: {{ corpus_info[4] }}</li>
+					<li>User filter: {{ corpus_info[5] }}</li>
 				{% endif %}
 			{% endif %}
 			</li>
