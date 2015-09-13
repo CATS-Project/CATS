@@ -121,6 +121,7 @@ def collection_dashboard_page():
             row = cursor.fetchone()
             if row is not None:
                 corpus_info = row
+            print corpus_info
         return render_template('collection.html', corpus_info=corpus_info, user=session['name'])
     else:
         return redirect(url_for('login'))
