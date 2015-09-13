@@ -46,7 +46,7 @@ def index():
     return ""
 
 
-@app.route('/cats/login/', methods=['GET', 'POST'])
+@app.route('/cats/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
@@ -91,7 +91,7 @@ def get_tweet_count():
         return 'no match'
 
 
-@app.route('/cats/initialization/', methods=['GET', 'POST'])
+@app.route('/cats/initialization', methods=['GET', 'POST'])
 def initialization_page():
     if session.get('name') is not None:
         error = None
@@ -111,7 +111,7 @@ def initialization_page():
         return redirect(url_for('login'))
 
 
-@app.route('/cats/collection/')
+@app.route('/cats/collection')
 def collection_dashboard_page():
     if session.get('name') is not None:
         corpus_info = None
@@ -128,7 +128,7 @@ def collection_dashboard_page():
         return redirect(url_for('login'))
 
 
-@app.route('/cats/collection/', methods=['POST'])
+@app.route('/cats/collection', methods=['POST'])
 def collection_dashboard_page2():
     if session['can_collect_tweets'] == 'True' and not os.path.isfile('collecting.lock'):
         lock = open("collecting.lock", "w")
@@ -168,7 +168,7 @@ def collection_thread(duration, keywords, users, location, language):
     s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 
-@app.route('/cats/analysis/')
+@app.route('/cats/analysis')
 def analysis_dashboard_page():
     if session.get('name') is not None:
         tweet_count = get_tweet_count()
@@ -183,7 +183,7 @@ def analysis_dashboard_page():
         return redirect(url_for('login'))
 
 
-@app.route('/cats/analysis/', methods=['POST'])
+@app.route('/cats/analysis', methods=['POST'])
 def analysis_dashboard_page2():
     keywords = request.form['keyword']
     date = request.form['date']
@@ -209,7 +209,7 @@ def analysis_dashboard_page2():
     return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
 
 
-@app.route('/cats/about/')
+@app.route('/cats/about')
 def about_page():
     return render_template('about.html')
 
