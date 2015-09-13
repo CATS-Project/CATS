@@ -16,18 +16,13 @@ with sqlite3.connect(db_filename) as conn:
         print 'Inserting test users'
         
         conn.execute("""
-        insert into user (username, password)
-        values ('adrien', 'test')
+        insert into user (username, password, can_collect_tweets)
+        values ('demo', 'demo', 'False')
         """)
         
         conn.execute("""
-        insert into user (username, password)
-        values ('michael', 'test')
-        """)
-        
-        conn.execute("""
-        insert into user (username, password)
-        values ('ciprian', 'test')
+        insert into user (username, password, can_collect_tweets)
+        values ('michael', 'test', 'True')
         """)
     else:
         print 'Database exists, assume schema does, too.'

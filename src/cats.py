@@ -47,8 +47,7 @@ def login():
     if request.method == 'POST':
         with sqlite3.connect(user_db_filename) as conn:
             cursor = conn.cursor()
-            cursor.execute("select password from user where username = '"+request.form['username']+"'")
-            password = ''
+            cursor.execute("select password, can_collect_tweets from user where username = '"+request.form['username']+"'")
             row = cursor.fetchone()
             if row is not None:
                 password = row[0]
@@ -56,7 +55,15 @@ def login():
                     session['name'] = request.form['username']
                     session['query'] = {}
                     session['query_pretty'] = ""
-                    return redirect(url_for('collection_dashboard_page'))
+                    session['can_collect_tweets'] = bool(row[1])
+                    print session['name'], 'can collect tweets:', session['can_collect_tweets']
+                    cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
+                    row = cursor.fetone()
+                    if session['can_collect_tweets'] and row is None:
+                        print session['name'], ' needs to provides access tokens'
+                        return redirect(url_for('initialization_page'))
+                    else:
+                        return redirect(url_for('collection_dashboard_page'))
                 else:
                     error = 'Invalid Credentials. Please try again.'
     return render_template('login.html', error=error)
@@ -95,11 +102,11 @@ def initialization_page2():
 @app.route('/cats/collection')
 def collection_dashboard_page():
     if session.get('name') is not None:
-        if can_collect_tweets and os.path.isfile('collecting.lock'):
+        if session['can_collect_tweets'] and os.path.isfile('collecting.lock'):
             lock = open('collecting.lock', 'r').read()
             corpus_info = lock.split(';')
             return render_template('collection.html', collecting_corpus=corpus_info, user=session['name'])
-        elif not can_collect_tweets:
+        elif not session['can_collect_tweets']:
             lock = open('demonstration.info', 'r').read()
             corpus_info = lock.split(';')
             return render_template('collection.html', collected_corpus=corpus_info, user=session['name'])
@@ -111,7 +118,7 @@ def collection_dashboard_page():
 
 @app.route('/cats/collection', methods=['POST'])
 def collection_dashboard_page2():
-    if can_collect_tweets and not os.path.isfile('collecting.lock'):
+    if session['can_collect_tweets'] and not os.path.isfile('collecting.lock'):
         lock = open("collecting.lock", "w")
         checked_lang = request.form.getlist('lang')
         lang = checked_lang[0]
