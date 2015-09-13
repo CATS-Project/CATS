@@ -40,7 +40,7 @@
 		    <h2>Twitter OAuth</h2>
 			<p> Welcome! Before using CATS to collect tweets through Twitter's API, you must be able to connect to it with specific access tokens with which you will be able to use OAuth. For help about how to get your free Twitter OAuth access tokens, take a look at the following page: <a href="https://github.com/CATS-Project/CATS/wiki#getting-your-twitter-oauth">https://github.com/CATS-Project/CATS/wiki#getting-your-twitter-oauth</a></p>
 		    <label id="consumer-key">Consumer key: </label><br/>
-			<form action="{{ url_for('initialization_page2') }}" method="POST">
+			<form action="{{ url_for('initialization_page') }}" method="POST">
 				<input type="text" name="consumer-key" class="underlined" style="width:615px;"/><br/>
 				<label id="cons-sec">Consumer secret: </label><br/>
 				<input type="text" name="consumer-secret" class="underlined" style="width:615px;"/><br/>
