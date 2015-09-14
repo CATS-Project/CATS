@@ -88,7 +88,7 @@ def get_tweet_count():
     if count > 0:
         return str(count)+' tweets'
     else:
-        return 'no match'
+        return '0 tweet'
 
 
 @app.route('/cats/initialization', methods=['GET', 'POST'])
@@ -204,7 +204,7 @@ def analysis_dashboard_page2():
         start, end = date.split(" ") 
         session['query']['date'] = {"$gt": start, "$lte": end}
     if session.get('query'):
-        queries.constructVocabulary(query=session['query'])
+        queries[session['name']].constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
     return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
 
