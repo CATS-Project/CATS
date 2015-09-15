@@ -76,5 +76,6 @@ class Queries:
 
 if __name__ == "__main__":
     queries = Queries('TwitterDB', 'localhost', 27017)
-    x = queries.getOneWord(query={'word': 'fuck'}, fields={'IDF': 1}, existing=False)['IDF']
+    queries.constructVocabulary()
+    # x = queries.getOneWord(query={'word': 'fuck'}, fields={'IDF': 1}, existing=False)['IDF']
     print x

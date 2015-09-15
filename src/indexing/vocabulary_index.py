@@ -26,16 +26,18 @@ functionCreate = """function(noDocs, all){
                         while(items.hasNext()){
                             var item = items.next();
                             var idf = 1 + Math.round(Math.log(noDocs/item.value) * 100)/100;
-                            doc = {word: item._id, IDF: idf};
+                            var gtf = item.value/noDocs;
+                            doc = {word: item._id, IDF: idf, GTF: gtf};
                             docs.push(doc);
                         }
                         if (all == 1){
                             db.vocabulary.insert(docs);
                             db.vocabulary.ensureIndex({IDF:1});
+                            db.vocabulary.ensureIndex({GTF:1});
                         }
                         else if (all == 0){
                             db.vocabulary_query.insert(docs);
-                            db.vocabulary_query.ensureIndex({'IDF':1});
+                            db.vocabulary_query.ensureIndex({'GTF':1});
                         }
                         db.temp_collection.drop();
                     }"""

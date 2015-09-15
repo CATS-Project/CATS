@@ -252,13 +252,13 @@ def get_term_cloud():
 def get_term_list():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=True)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'GTF': 1}, limit=1000, existing=True)
         else:
-            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=1000, existing=False)
-        csv = 'word,IDF\n'
+            voc = queries[session['name']].getWords(fields={'word': 1, 'GTF': 1}, limit=1000, existing=False)
+        csv = 'word,GTF\n'
         for doc in voc:
-            print doc['word'], doc['IDF']
-            csv += doc['word']+','+str(doc['IDF'])+'\n'
+            print doc['word'], doc['GTF']
+            csv += doc['word']+','+str(doc['GTF'])+'\n'
         return Response(csv, mimetype="text/csv")
     else:
         return redirect(url_for('login'))
