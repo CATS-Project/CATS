@@ -308,7 +308,9 @@ def get_named_entity_cloud():
 @app.route('/cats/analysis/train_lda', methods=['POST'])
 def train_lda():
     if not lda_running:
-        k = int(request.form['k-lda'])
+        k = 10
+        if request.form['k-lda'] != '':
+            k = int(request.form['k-lda'])
         t = threading.Thread(target=thread_lda, args=(k,))
         t.start()
         return render_template('waiting.html', method_name='LDA')
@@ -335,7 +337,9 @@ def thread_lda(k):
 @app.route('/cats/analysis/train_lsa', methods=['POST'])
 def train_lsa():
     if not lsa_running:
-        k = int(request.form['k-lsa'])
+        k = 10
+        if request.form['k-lsa'] != '':
+            k = int(request.form['k-lsa'])
         t = threading.Thread(target=thread_lsa, args=(k,))
         t.start()
         return render_template('waiting.html', method_name='LSA')
@@ -359,7 +363,9 @@ def thread_lsa(k):
 @app.route('/cats/analysis/detect_events', methods=['POST'])
 def run_mabed():
     if not mabed_running:
-        k = int(request.form['k-mabed'])
+        k = 10
+        if request.form['k-mabed'] != '':
+            k = int(request.form['k-mabed'])
         t = threading.Thread(target=thread_mabed, args=(k,))
         t.start()
         return render_template('waiting.html', method_name='MABED')
