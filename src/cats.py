@@ -321,6 +321,7 @@ def train_lda():
 def thread_lda(k):
     global lda_running
     session['lda_running'] = True
+    session['lda'] = None
     lda = LDA(dbname=session['name'], host=host, port=port)
     results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
@@ -350,6 +351,7 @@ def train_lsa():
 def thread_lsa(k):
     global lsa_running
     session['lsa_running'] = True
+    session['lsa'] = None
     lsa = LSA(dbname=session['name'], host=host, port=port)
     results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
     print 'LSA\n', results
@@ -376,6 +378,7 @@ def run_mabed():
 def thread_mabed(k):
     global mabed_running
     session['mabed_running'] = True
+    session['mabed'] = None
     for the_file in os.listdir('mabed/input'):
         file_path = os.path.join('mabed/input', the_file)
         try:
