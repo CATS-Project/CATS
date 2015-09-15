@@ -60,6 +60,12 @@ def login():
                     session['query'] = {}
                     session['query_pretty'] = ""
                     session['can_collect_tweets'] = row[1]
+                    session['lda_running'] = False
+                    session['lsa_running'] = False
+                    session['mabed_running'] = False
+                    session['lda'] = None
+                    session['lsa'] = None
+                    session['mabed'] = None
                     queries[session['name']] = Queries(dbname=session['name'], host=host, port=port)
                     print session['name'], 'can collect tweets:', session['can_collect_tweets']
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
