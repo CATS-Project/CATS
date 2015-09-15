@@ -141,46 +141,49 @@ def collection_dashboard_page():
 
 @app.route('/cats/collection', methods=['POST'])
 def collection_dashboard_page2():
-    if session['can_collect_tweets'] == 'True' and not os.path.isfile('collecting.lock'):
-        lock = open("collecting.lock", "w")
-        checked_lang = request.form.getlist('lang')
-        lang = checked_lang[0]
-        if request.form.get('collection_duration'):
-            duration = int(request.form.get('collection_duration'))
-            if duration > 30:
-                duration = 30
-        else:
-            duration = 1
-        if request.form.get('keyword_list'):
-            keywords = request.form.get('keyword_list')
-            lock.write(str(datetime.date.today())+';'+str(duration)+';'+keywords+';None;None')
-        else:
-            keywords = ""
-        if request.form.get('user_list'):
-            users = request.form.get('user_list')
-            lock.write(str(datetime.date.today())+';'+str(duration)+';None;None;'+users)
-        else:
-            users = ""
-        if request.form.get('bounding_box'):
-            location = request.form.get('bounding_box')
-            lock.write(str(datetime.date.today())+';'+str(duration)+';None;'+location+';None')
-        else:
-            location = ""
-        lock.close()
-        t = threading.Thread(target=collection_thread, args=(duration,keywords,users,location,lang,))
-        t.start()
-        return collection_dashboard_page()
+    if session['can_collect_tweets'] == 'True':
+        conn = sqlite3.connect(user_db_filename)
+        cursor = conn.cursor()
+        cursor.execute("select * from oauth where username = '"+session['name']+"' and running = 'True'")
+        row = cursor.fetchone()
+        if row is None:
+            lock = open("collecting.lock", "w")
+            checked_lang = request.form.getlist('lang')
+            lang = checked_lang[0]
+            if request.form.get('collection_duration'):
+                duration = int(request.form.get('collection_duration'))
+                if duration > 30:
+                    duration = 30
+            else:
+                duration = 1
+            if request.form.get('keyword_list'):
+                keywords = request.form.get('keyword_list')
+                lock.write(str(datetime.date.today())+';'+str(duration)+';'+keywords+';None;None')
+            else:
+                keywords = ""
+            if request.form.get('user_list'):
+                users = request.form.get('user_list')
+                lock.write(str(datetime.date.today())+';'+str(duration)+';None;None;'+users)
+            else:
+                users = ""
+            if request.form.get('bounding_box'):
+                location = request.form.get('bounding_box')
+                lock.write(str(datetime.date.today())+';'+str(duration)+';None;'+location+';None')
+            else:
+                location = ""
+            #update user db: conn.execute("insert into collection (username, start, duration, language, keyword, location, user, running) values ('"+session['name']+"', '2015-04-06', '60', 'English', 'None', '49.186288,0.043709,53.186288,-8.043709', 'None', 'False')")
+            cursor.execute("select consumer_key, consumer_secret, token, token_secret from oauth where username = '"+session['name']+"'")
+            row = cursor.fetchone()
+            t = threading.Thread(target=collection_thread, args=(duration, keywords, users, location, lang, row,))
+            t.start()
+            return collection_dashboard_page()
     else:
         return render_template('collecting.html')
 
 
-def collection_thread(duration, keywords, users, location, language):
-    with sqlite3.connect(user_db_filename) as conn:
-        cursor = conn.cursor()
-        cursor.execute("select consumer_key, consumer_secret, token, token_secret from oauth where username = '"+session['name']+"'")
-        row = cursor.fetchone()
-        s = Streaming(dbname=session['name'], consumer_key=row[0], consumer_secret=row[1], token=row[2], token_secret=row[3])
-        s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
+def collection_thread(duration, keywords, users, location, language, oauth):
+    s = Streaming(dbname=session['name'], consumer_key=oauth[0], consumer_secret=oauth[1], token=oauth[2], token_secret=oauth[3])
+    s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 
 @app.route('/cats/analysis')

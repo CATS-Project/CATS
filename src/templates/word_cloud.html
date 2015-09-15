@@ -39,13 +39,8 @@
 				<p><a href="/cats/analysis">Go back to the analysis dashboard</a></p>
 				<div role="main">
 					<div id="wordcloud2" class="wordcloud">
-						{% set firstLine = 0 %}
 						{% for doc in voc %}
-						  {% if firstLine == 0 %}
-						    {% set firstLine = 1 %}
-						    {% set max = 1/doc['IDF'] %}
-						  {% endif %}
-							<span data-weight="{{ 50+(50/doc['IDF']/max) }}"><a href="/cats/analysis/tweets/{{doc['word']}}">{{ doc['word'] }}</a></span>
+							<span data-weight="{{ doc['GTF']) }}"><a href="/cats/analysis/tweets/{{doc['word']}}">{{ doc['word'] }}</a></span>
 					  	{% endfor %}
 					</div>
 					<script>
@@ -53,7 +48,7 @@
 							$("#wordcloud2").awesomeCloud({
 								"size" : {
 									"grid" : 20,
-									"factor" : 0.25
+									"factor" : 3
 								},
 								"options" : {
 									"color" : "random-dark",
