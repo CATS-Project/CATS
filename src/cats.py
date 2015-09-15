@@ -243,9 +243,9 @@ def construct_vocabulary():
 def get_term_cloud():
     if session.get('name') is not None:
         if session.get('query'):
-            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=True)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'GTF': 1}, limit=150, existing=True)
         else:
-            voc = queries[session['name']].getWords(fields={'word': 1, 'IDF': 1}, limit=150, existing=False)
+            voc = queries[session['name']].getWords(fields={'word': 1, 'GTF': 1}, limit=150, existing=False)
         return render_template('word_cloud.html', voc=voc, filter=session['query_pretty'])
     else:
         return redirect(url_for('login'))
