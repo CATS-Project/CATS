@@ -379,16 +379,17 @@ def thread_mabed(k):
     global mabed_running
     session['mabed_running'] = True
     session['mabed'] = None
-    for the_file in os.listdir('mabed/input'):
-        file_path = os.path.join('mabed/input', the_file)
+    for the_file in os.listdir('mabed/input/'+session['name']):
+        file_path = os.path.join('mabed/input/'+session['name'], the_file)
         try:
             if os.path.isfile(file_path):
                 os.unlink(file_path)
-            elif os.path.isdir(file_path): shutil.rmtree(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
         except Exception, e:
             print e
     mf = MabedFiles(dbname=session['name'], host=host, port=port)
-    mf.buildFiles(session['query'], filepath='mabed/'+session['name']+'/input/', slice=60*60)
+    mf.buildFiles(session['query'], filepath='mabed/input/'+session['name'], slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
     session['mabed_running'] = False
     session['mabed'] = result
