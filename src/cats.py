@@ -30,12 +30,6 @@ queries = {}
 host = 'localhost'
 port = 27017
 
-can_collect_tweets = False
-
-lda_running = False
-lsa_running = False
-mabed_running = False
-
 app = Flask(__name__)
 app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 
@@ -307,7 +301,7 @@ def get_named_entity_cloud():
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
 def train_lda():
-    if not lda_running:
+    if not session['lda_running']:
         k = 10
         if request.form['k-lda'] != '':
             k = int(request.form['k-lda'])
@@ -319,7 +313,6 @@ def train_lda():
 
 
 def thread_lda(k):
-    global lda_running
     session['lda_running'] = True
     session['lda'] = None
     lda = LDA(dbname=session['name'], host=host, port=port)
@@ -337,7 +330,7 @@ def thread_lda(k):
 
 @app.route('/cats/analysis/train_lsa', methods=['POST'])
 def train_lsa():
-    if not lsa_running:
+    if not session['lsa_running']:
         k = 10
         if request.form['k-lsa'] != '':
             k = int(request.form['k-lsa'])
@@ -349,7 +342,6 @@ def train_lsa():
 
 
 def thread_lsa(k):
-    global lsa_running
     session['lsa_running'] = True
     session['lsa'] = None
     lsa = LSA(dbname=session['name'], host=host, port=port)
@@ -364,7 +356,7 @@ def thread_lsa(k):
 
 @app.route('/cats/analysis/detect_events', methods=['POST'])
 def run_mabed():
-    if not mabed_running:
+    if not session['mabed_running']:
         k = 10
         if request.form['k-mabed'] != '':
             k = int(request.form['k-mabed'])
@@ -376,7 +368,6 @@ def run_mabed():
 
 
 def thread_mabed(k):
-    global mabed_running
     session['mabed_running'] = True
     session['mabed'] = None
     for the_file in os.listdir('mabed/input/'+session['name']):
