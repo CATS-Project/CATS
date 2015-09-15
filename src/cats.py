@@ -414,7 +414,7 @@ def browse_lda_topics():
         if lda_running[session['name']]:
             return render_template('waiting.html', method_name='LDA')
         elif lda_results[session['name']] is not None:
-            return render_template('topic_browser.html', topics=lda_results[session['name']], filter=session['pretty_query'])
+            return render_template('topic_browser.html', topics=lda_results[session['name']], filter=session['query_pretty'])
         else:
             return render_template('unavailable.html', method_name='LDA')
     else:
@@ -432,7 +432,7 @@ def browse_lsa_topics():
         if lsa_running[session['name']]:
             return render_template('waiting.html', method_name='LSA')
         elif lsa_results[session['name']] is not None:
-            return render_template('topic_browser.html', topics=lsa_results[session['name']], filter=session['pretty_query'])
+            return render_template('topic_browser.html', topics=lsa_results[session['name']], filter=session['query_pretty'])
         else:
             return render_template('unavailable.html', method_name='LSA')
     else:
@@ -450,7 +450,7 @@ def browse_events():
         if mabed_running[session['name']]:
             return render_template('waiting.html', method_name='MABED')
         elif mabed_results[session['name']] is not None:
-            return render_template('event_browser.html', events=mabed_results[session['name']], filter=session['pretty_query'])
+            return render_template('event_browser.html', events=mabed_results[session['name']], filter=session['query_pretty'])
         else:
             return render_template('unavailable.html', method_name='MABED')
     else:
