@@ -18,6 +18,10 @@ with sqlite3.connect(db_filename) as conn:
         with open(schema_filename, 'rt') as f:
             schema = f.read()
         conn.executescript(schema)
+        if not os.path.exists('streaming/data/'):
+            os.makedirs('streaming/data/')
+        if not os.path.exists('mabed/input/'):
+            os.makedirs('mabed/input/')
 
         print 'Inserting default data'
         
