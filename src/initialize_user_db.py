@@ -1,3 +1,9 @@
+__author__ = "Adrien Guille"
+__license__ = "GNU GPL"
+__version__ = "0.1"
+__email__ = "adrien.guille@univ-lyon2.fr"
+__status__ = "Production"
+
 import os
 import sqlite3
 

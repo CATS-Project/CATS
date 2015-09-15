@@ -379,7 +379,7 @@ def thread_mabed(k):
         except Exception, e:
             print e
     mf = MabedFiles(dbname=session['name'], host=host, port=port)
-    mf.buildFiles(session['query'], filepath='mabed/input/', slice=60*60)
+    mf.buildFiles(session['query'], filepath='mabed/'+session['name']+'/input/', slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
     session['mabed_running'] = False
     session['mabed'] = result
