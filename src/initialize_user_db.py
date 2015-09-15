@@ -33,13 +33,6 @@ with sqlite3.connect(db_filename) as conn:
             os.makedirs('streaming/data/demo')
         if not os.path.exists('mabed/input/demo'):
             os.makedirs('mabed/input/demo')
-        
-        conn.execute("""
-        insert into user (username, password, can_collect_tweets)
-        values ('michael', 'test', 'True')
-        """)
-        if not os.path.exists('streaming/data/michael'):
-            os.makedirs('mabed/input/michael')
 
         conn.execute("""
         insert into collection (username, start, duration, language, keyword, location, user, running)
