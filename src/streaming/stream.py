@@ -9,26 +9,28 @@ import datetime
 import threading
 import subprocess
 
-tweets_per_file = 500
-
 
 def quote(string):
     return '"'+string.encode('utf-8')+'"'
 
 
 class Streaming:
-    def __init__(self, dbname='TwitterDBTest', host='localhost', port=27017):
+    def __init__(self, dbname='TwitterDBTest', host='localhost', port=27017, consumer_key=None, consumer_secret=None, token=None, token_secret=None):
         self.db_name = dbname
         self.host = host
         self.port = port
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.token = token
+        self.token_secret = token_secret
 
-    def threadUpdate(self,filename):
-        print('Importing',filename,'...')
-        filepath = 'streaming/data/'+str(filename)+'.csv'
+    def thread_update(self, filename):
+        print('Importing', filename, '...')
+        file_path = 'streaming/data/'+str(filename)+'.csv'
         if filename == 1:
-            subprocess.call(['sh','stream_run.sh', filepath, self.db_name, self.host, self.port])
+            subprocess.call(['sh', 'stream_run.sh', file_path, self.db_name, self.host, self.port])
         else:
-            subprocess.call(['sh','stream_update.sh', filepath, self.db_name, self.host, self.port])
+            subprocess.call(['sh', 'stream_update.sh', file_path, self.db_name, self.host, self.port])
         print('Done.')
 
     def collect_tweets(self, duration=1, keys=None, follow=None, loc=None, lang='en'):
@@ -36,12 +38,12 @@ class Streaming:
         nb_tweets_infile = 0
         nb_files = 1
         last_import_day = datetime.datetime.now().day
-        file = open('streaming/data/'+str(nb_files)+'.csv', 'w')
+        file = open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'w')
         auth = OAuth(
-            consumer_key=str(open('streaming/consumer_key','r').read()),
-            consumer_secret=str(open('streaming/consumer_secret','r').read()),
-            token=str(open('streaming/token','r').read()),
-            token_secret=str(open('streaming/token_secret','r').read())
+            consumer_key=self.consumer_key,
+            consumer_secret=self.consumer_secret,
+            token=self.token,
+            token_secret=self.token_secret
         )
         twitter_stream = TwitterStream(auth=auth)
         start_date = datetime.date.today()
@@ -66,20 +68,20 @@ class Streaming:
                     text = text.replace('"',' ')
                     text = quote(text.replace('\n',' '))
                     geo = ''
-                    if(tweet.get('geo')):
+                    if tweet.get('geo'):
                         geo = str(tweet['geo']['coordinates'][0])+','+str(tweet['geo']['coordinates'][1])
                     geo = quote(geo)
                     timestamp = quote(datetime.datetime.fromtimestamp(float(tweet['timestamp_ms'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
                     nb_tweets += 1
                     nb_tweets_infile += 1
                     description = ''
-                    if(tweet['user'].get('description')):
+                    if tweet['user'].get('description'):
                         description = tweet['user']['description']
-                        description = description.replace('"',' ')
-                        description = description.replace('\n',' ')
+                        description = description.replace('"', ' ')
+                        description = description.replace('\n', ' ')
                     description = quote(description)
                     name = ''
-                    if(tweet['user'].get('name')):
+                    if tweet['user'].get('name'):
                         name = tweet['user']['name']
                     name = quote(name)
                     file.write(quote(str(tweet['id']))+'\t'+text+'\t'+timestamp+'\t'+quote(str(tweet['user']['id']))+'\t'+geo+'\t'+description+'\t'+name+'\t'+quote(tweet['lang'].upper())+'\n')
@@ -87,18 +89,13 @@ class Streaming:
                         if not datetime.datetime.now().day == last_import_day:
                             last_import_day = datetime.datetime.now().day
                             current_date = datetime.date.today()
-                            t = threading.Thread(target=self.threadUpdate, args=(nb_files,))
+                            t = threading.Thread(target=self.thread_update, args=(nb_files,))
                             t.start()
                             if current_date <= end_date:
                                 nb_files += 1
                                 nb_tweets_infile = 0
-                                file = open('streaming/data/'+str(nb_files)+'.csv', 'a')
+                                file = open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'a')
                             else:
                                 break
             except:
                 print 'exception: ', tweet
-
-if __name__ == '__main__':
-    s = Streaming(dbname='TwitterDBTest')
-    keywords = 'obama,hollande'
-    s.collect_tweets(keys=keywords)

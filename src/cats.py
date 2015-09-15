@@ -175,8 +175,12 @@ def collection_dashboard_page2():
 
 
 def collection_thread(duration, keywords, users, location, language):
-    s = Streaming(dbname=session['name'])
-    s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
+    with sqlite3.connect(user_db_filename) as conn:
+        cursor = conn.cursor()
+        cursor.execute("select consumer_key, consumer_secret, token, token_secret from oauth where username = '"+session['name']+"'")
+        row = cursor.fetchone()
+        s = Streaming(dbname=session['name'], consumer_key=row[0], consumer_secret=row[1], token=row[2], token_secret=row[3])
+        s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 
 @app.route('/cats/analysis')

@@ -77,6 +77,8 @@
 					<li>Keyword filter: {{ corpus_info[3] }}</li>
 					<li>Location filter: {{ corpus_info[4] }}</li>
 					<li>User filter: {{ corpus_info[5] }}</li>
+				{% else %}
+					<p>No corpus being currently collected.</p>
 				{% endif %}
 			{% endif %}
 
