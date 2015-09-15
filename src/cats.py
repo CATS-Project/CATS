@@ -30,6 +30,17 @@ queries = {}
 host = 'localhost'
 port = 27017
 
+# Algorithms running
+lda_running = {}
+lsa_running = {}
+mabed_running = {}
+
+# Algorithms results
+lda_results = {}
+lsa_results = {}
+mabed_results = {}
+
+# Flask application
 app = Flask(__name__)
 app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 
@@ -54,12 +65,12 @@ def login():
                     session['query'] = {}
                     session['query_pretty'] = ""
                     session['can_collect_tweets'] = row[1]
-                    session['lda_running'] = False
-                    session['lsa_running'] = False
-                    session['mabed_running'] = False
-                    session['lda'] = None
-                    session['lsa'] = None
-                    session['mabed'] = None
+                    lda_running[session['name']] = False
+                    lsa_running[session['name']] = False
+                    mabed_running[session['name']] = False
+                    lda_results[session['name']] = None
+                    lsa_results[session['name']] = None
+                    mabed_results[session['name']] = None
                     queries[session['name']] = Queries(dbname=session['name'], host=host, port=port)
                     print session['name'], 'can collect tweets:', session['can_collect_tweets']
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
@@ -301,22 +312,24 @@ def get_named_entity_cloud():
 
 @app.route('/cats/analysis/train_lda', methods=['POST'])
 def train_lda():
-    if not session['lda_running']:
+    if not lda_running[session['name']]:
         k = 10
         if request.form['k-lda'] != '':
             k = int(request.form['k-lda'])
-        t = threading.Thread(target=thread_lda, args=(k,))
+        t = threading.Thread(target=thread_lda, args=(k, session['name'], session['query']))
         t.start()
         return render_template('waiting.html', method_name='LDA')
     else:
         return render_template('already_running.html', method_name='LDA')
 
 
-def thread_lda(k):
-    session['lda_running'] = True
-    session['lda'] = None
-    lda = LDA(dbname=session['name'], host=host, port=port)
-    results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
+def thread_lda(k, db_name, query):
+    global lda_running
+    global lda_results
+    lda_running[db_name] = True
+    lda_results[db_name] = None
+    lda = LDA(dbname=db_name, host=host, port=port)
+    results = lda.apply(query=query, num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
     for doc in results[1]:
         for topic in doc:
@@ -324,54 +337,58 @@ def thread_lda(k):
     topics = []
     for i in range(0, k):
         topics.append([i, scores[i], results[0][i]])
-    session['lda_running'] = False
-    session['lda'] = topics
+    lda_running[db_name] = False
+    lda_results[db_name] = topics
 
 
 @app.route('/cats/analysis/train_lsa', methods=['POST'])
 def train_lsa():
-    if not session['lsa_running']:
+    if not lsa_running[session['name']]:
         k = 10
         if request.form['k-lsa'] != '':
             k = int(request.form['k-lsa'])
-        t = threading.Thread(target=thread_lsa, args=(k,))
+        t = threading.Thread(target=thread_lsa, args=(k, session['name'], session['query']))
         t.start()
         return render_template('waiting.html', method_name='LSA')
     else:
         return render_template('already_running.html', method_name='LSA')
 
 
-def thread_lsa(k):
-    session['lsa_running'] = True
-    session['lsa'] = None
-    lsa = LSA(dbname=session['name'], host=host, port=port)
-    results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
+def thread_lsa(k, db_name, query):
+    global lsa_running
+    global lsa_results
+    lsa_running[db_name] = True
+    lsa_results[db_name] = None
+    lsa = LSA(dbname=db_name, host=host, port=port)
+    results = lsa.apply(query=query, num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
     for i in range(0, k):
         topics.append([i, 0, results[i]])
-    session['lsa_running'] = False
-    session['lsa'] = topics
+    lsa_running[db_name] = False
+    lda_results[db_name] = topics
 
 
 @app.route('/cats/analysis/detect_events', methods=['POST'])
 def run_mabed():
-    if not session['mabed_running']:
+    if not mabed_running[session['name']]:
         k = 10
         if request.form['k-mabed'] != '':
             k = int(request.form['k-mabed'])
-        t = threading.Thread(target=thread_mabed, args=(k,))
+        t = threading.Thread(target=thread_mabed, args=(k, session['name'], session['query']))
         t.start()
         return render_template('waiting.html', method_name='MABED')
     else:
         return render_template('already_running.html', method_name='MABED')
 
 
-def thread_mabed(k):
-    session['mabed_running'] = True
-    session['mabed'] = None
-    for the_file in os.listdir('mabed/input/'+session['name']):
-        file_path = os.path.join('mabed/input/'+session['name'], the_file)
+def thread_mabed(k, db_name, query):
+    global mabed_running
+    global mabed_results
+    mabed_running[db_name] = True
+    mabed_results[db_name] = None
+    for the_file in os.listdir('mabed/input/'+db_name):
+        file_path = os.path.join('mabed/input/'+db_name, the_file)
         try:
             if os.path.isfile(file_path):
                 os.unlink(file_path)
@@ -379,11 +396,11 @@ def thread_mabed(k):
                 shutil.rmtree(file_path)
         except Exception, e:
             print e
-    mf = MabedFiles(dbname=session['name'], host=host, port=port)
-    mf.buildFiles(session['query'], filepath='mabed/input/'+session['name'], slice=60*60)
+    mf = MabedFiles(dbname=db_name, host=host, port=port)
+    mf.buildFiles(query, filepath='mabed/input/'+db_name, slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
-    session['mabed_running'] = False
-    session['mabed'] = result
+    mabed_running[db_name] = False
+    mabed_results[db_name] = result
 
 
 @app.route('/cats/analysis/lda_topics.csv')
@@ -394,10 +411,10 @@ def get_lda_topics():
 @app.route('/cats/analysis/lda_topic_browser')
 def browse_lda_topics():
     if session.get('name') is not None:
-        if session['lda_running']:
+        if lda_running[session['name']]:
             return render_template('waiting.html', method_name='LDA')
-        elif session['lda'] is not None:
-            return render_template('topic_browser.html', topics=session['lda'], filter=session['pretty_query'])
+        elif lda_results[session['name']] is not None:
+            return render_template('topic_browser.html', topics=lda_results[session['name']], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='LDA')
     else:
@@ -412,10 +429,10 @@ def get_lsa_topics():
 @app.route('/cats/analysis/lsa_topic_browser')
 def browse_lsa_topics():
     if session.get('name') is not None:
-        if session['lsa_running']:
+        if lsa_running[session['name']]:
             return render_template('waiting.html', method_name='LSA')
-        elif session['lsa'] is not None:
-            return render_template('topic_browser.html', topics=session['lsa'], filter=session['pretty_query'])
+        elif lsa_results[session['name']] is not None:
+            return render_template('topic_browser.html', topics=lsa_results[session['name']], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='LSA')
     else:
@@ -430,10 +447,10 @@ def get_events():
 @app.route('/cats/analysis/mabed_event_browser')
 def browse_events():
     if session.get('name') is not None:
-        if session['mabed_running']:
+        if mabed_running[session['name']]:
             return render_template('waiting.html', method_name='MABED')
-        elif session['mabed'] is not None:
-            return render_template('event_browser.html', events=session['mabed'], filter=session['pretty_query'])
+        elif mabed_results[session['name']] is not None:
+            return render_template('event_browser.html', events=mabed_results[session['name']], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='MABED')
     else:
