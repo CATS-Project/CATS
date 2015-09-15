@@ -312,7 +312,7 @@ def train_lda():
 
 def thread_lda(k):
     global lda_running
-    lda_running = True
+    session['lda_running'] = True
     lda = LDA(dbname=session['name'], host=host, port=port)
     results = lda.apply(query=session['query'], num_topics=k, num_words=10, iterations=500)
     scores = [0]*k
@@ -322,9 +322,8 @@ def thread_lda(k):
     topics = []
     for i in range(0, k):
         topics.append([i, scores[i], results[0][i]])
-    lda_running = False
-    pickle.dump(topics, open("lda_topics.p", "wb"))
-    pickle.dump(session['query_pretty'], open("lda_query.p", "wb"))
+    session['lda_running'] = False
+    session['lda'] = topics
 
 
 @app.route('/cats/analysis/train_lsa', methods=['POST'])
@@ -340,16 +339,15 @@ def train_lsa():
 
 def thread_lsa(k):
     global lsa_running
-    lsa_running = True
+    session['lsa_running'] = True
     lsa = LSA(dbname=session['name'], host=host, port=port)
     results = lsa.apply(query=session['query'], num_topics=k, num_words=10)
     print 'LSA\n', results
     topics = []
     for i in range(0, k):
         topics.append([i, 0, results[i]])
-    lsa_running = False
-    pickle.dump(topics, open("lsa_topics.p", "wb"))
-    pickle.dump(session['query_pretty'], open("lsa_query.p", "wb"))
+    session['lsa_running'] = False
+    session['lsa'] = topics
 
 
 @app.route('/cats/analysis/detect_events', methods=['POST'])
@@ -358,14 +356,14 @@ def run_mabed():
         k = int(request.form['k-mabed'])
         t = threading.Thread(target=thread_mabed, args=(k,))
         t.start()
-        return render_template('waiting.html',method_name='MABED')
+        return render_template('waiting.html', method_name='MABED')
     else:
-        return render_template('already_running.html',method_name='MABED')
+        return render_template('already_running.html', method_name='MABED')
 
 
 def thread_mabed(k):
     global mabed_running
-    mabed_running = True
+    session['mabed_running'] = True
     for the_file in os.listdir('mabed/input'):
         file_path = os.path.join('mabed/input', the_file)
         try:
@@ -377,9 +375,8 @@ def thread_mabed(k):
     mf = MabedFiles(dbname=session['name'], host=host, port=port)
     mf.buildFiles(session['query'], filepath='mabed/input/', slice=60*60)
     result = subprocess.check_output(['java', '-jar', './mabed/MABED-CATS.jar', '60', str(k)])
-    mabed_running = False
-    pickle.dump(result, open("mabed_events.p", "wb"))
-    pickle.dump(session['query_pretty'], open("mabed_query.p", "wb"))
+    session['mabed_running'] = False
+    session['mabed'] = result
 
 
 @app.route('/cats/analysis/lda_topics.csv')
@@ -390,12 +387,10 @@ def get_lda_topics():
 @app.route('/cats/analysis/lda_topic_browser')
 def browse_lda_topics():
     if session.get('name') is not None:
-        if lda_running:
+        if session['lda_running']:
             return render_template('waiting.html', method_name='LDA')
-        elif os.path.isfile('lda_topics.p'):
-            r = pickle.load(open("lda_topics.p", "rb"))
-            qp = pickle.load(open("lda_query.p", "rb"))
-            return render_template('topic_browser.html', topics=r, filter=qp)
+        elif session['lda'] is not None:
+            return render_template('topic_browser.html', topics=session['lda'], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='LDA')
     else:
@@ -410,12 +405,10 @@ def get_lsa_topics():
 @app.route('/cats/analysis/lsa_topic_browser')
 def browse_lsa_topics():
     if session.get('name') is not None:
-        if lsa_running:
+        if session['lsa_running']:
             return render_template('waiting.html', method_name='LSA')
-        elif os.path.isfile('lsa_topics.p'):
-            r = pickle.load(open("lsa_topics.p", "rb"))
-            qp = pickle.load(open("lsa_query.p", "rb"))
-            return render_template('topic_browser.html', topics=r, filter=qp)
+        elif session['lsa'] is not None:
+            return render_template('topic_browser.html', topics=session['lsa'], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='LSA')
     else:
@@ -430,12 +423,10 @@ def get_events():
 @app.route('/cats/analysis/mabed_event_browser')
 def browse_events():
     if session.get('name') is not None:
-        if mabed_running:
+        if session['mabed_running']:
             return render_template('waiting.html', method_name='MABED')
-        elif os.path.isfile('mabed_events.p'):
-            r = pickle.load(open("mabed_events.p", "rb"))
-            qp = pickle.load(open("mabed_query.p", "rb"))
-            return render_template('event_browser.html', events=r, filter=qp)
+        elif session['mabed'] is not None:
+            return render_template('event_browser.html', events=session['mabed'], filter=session['pretty_query'])
         else:
             return render_template('unavailable.html', method_name='MABED')
     else:
