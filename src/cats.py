@@ -96,9 +96,9 @@ def download_tweets():
         else:
             # print "export basic data"
             tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
-        csv = 'tweetID,authorID,date,tweet\n'
+        csv = 'tweetID\tauthorID\tdate\ttweet\n'
         for doc in tweets:
-            csv += doc['_id']+','+doc['author']+','+str(doc['date'])+','+doc['rawText']+'\n'
+            csv += doc['_id']+'\t'+doc['author']+'\t'+str(doc['date'])+'\t'+doc['rawText'].replace('\t', ' ')+'\n'
         return Response(csv, mimetype="text/csv")
     else:
         return redirect(url_for('login'))
