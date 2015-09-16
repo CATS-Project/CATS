@@ -88,18 +88,21 @@ def login():
 @app.route('/cats/analysis/tweets.csv', methods=['POST'])
 def download_tweets():
     if session.get('name') is not None:
-        advanced_metadata = request.form.getlist('advanced_metadata')
-        if len(advanced_metadata) == 1:
-            # print "export advanced metadata"
-            # extract the same fields as for the basic for now
-            tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
+        only_ids = request.form.getlist('only_ids')
+        if len(only_ids) == 1:
+            # only ids
+            tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1})
+            csv = 'tweetID\n'
+            for doc in tweets:
+                csv += doc['_id']+'\n'
+            return Response(csv, mimetype="text/csv")
         else:
-            # print "export basic data"
+            # basic tweet descriptions
             tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
-        csv = 'tweetID\tauthorID\tdate\ttweet\n'
-        for doc in tweets:
-            csv += doc['_id']+'\t'+doc['author']+'\t'+str(doc['date'])+'\t'+doc['rawText'].replace('\t', ' ')+'\n'
-        return Response(csv, mimetype="text/csv")
+            csv = 'tweetID\tauthorID\tdate\ttweet\n'
+            for doc in tweets:
+                csv += doc['_id']+'\t'+doc['author']+'\t'+str(doc['date'])+'\t'+doc['rawText'].replace('\t', ' ')+'\n'
+            return Response(csv, mimetype="text/csv")
     else:
         return redirect(url_for('login'))
 
