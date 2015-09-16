@@ -87,11 +87,21 @@ def login():
 
 @app.route('/cats/analysis/tweets.csv', methods=['POST'])
 def download_tweets():
-    advanced_metadata = request.form.getlist('advanced_metadata')
-    if len(advanced_metadata) == 1:
-        return "export advanced metadata"
+    if session.get('name') is not None:
+        advanced_metadata = request.form.getlist('advanced_metadata')
+        if len(advanced_metadata) == 1:
+            # print "export advanced metadata"
+            # extract the same fields as for the basic for now
+            tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
+        else:
+            # print "export basic data"
+            tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
+        csv = 'tweetID,authorID,date,tweet\n'
+        for doc in tweets:
+            csv += doc['_id']+','+doc['author']+','+str(doc['date'])+','+doc['tweet'])+'\n'
+        return Response(csv, mimetype="text/csv")
     else:
-        return "export basic data"
+        return redirect(url_for('login'))
 
 
 def get_tweet_count():
