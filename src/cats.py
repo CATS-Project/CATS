@@ -98,7 +98,7 @@ def download_tweets():
             tweets = queries[session['name']].getDocuments(query=session['query'], fields={'_id': 1, 'author': 1, 'date': 1, 'rawText': 1})
         csv = 'tweetID,authorID,date,tweet\n'
         for doc in tweets:
-            csv += doc['_id']+','+doc['author']+','+str(doc['date'])+','+doc['tweet']+'\n'
+            csv += doc['_id']+','+doc['author']+','+str(doc['date'])+','+doc['rawText']+'\n'
         return Response(csv, mimetype="text/csv")
     else:
         return redirect(url_for('login'))
