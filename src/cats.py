@@ -160,7 +160,6 @@ def collection_dashboard_page2():
         cursor.execute("select * from oauth where username = '"+session['name']+"' and running = 'True'")
         row = cursor.fetchone()
         if row is None:
-            lock = open("collecting.lock", "w")
             checked_lang = request.form.getlist('lang')
             lang = checked_lang[0]
             if request.form.get('collection_duration'):
@@ -171,20 +170,18 @@ def collection_dashboard_page2():
                 duration = 1
             if request.form.get('keyword_list'):
                 keywords = request.form.get('keyword_list')
-                lock.write(str(datetime.date.today())+';'+str(duration)+';'+keywords+';None;None')
             else:
                 keywords = ""
             if request.form.get('user_list'):
                 users = request.form.get('user_list')
-                lock.write(str(datetime.date.today())+';'+str(duration)+';None;None;'+users)
             else:
                 users = ""
             if request.form.get('bounding_box'):
                 location = request.form.get('bounding_box')
-                lock.write(str(datetime.date.today())+';'+str(duration)+';None;'+location+';None')
             else:
                 location = ""
-            #update user db: conn.execute("insert into collection (username, start, duration, language, keyword, location, user, running) values ('"+session['name']+"', '2015-04-06', '60', 'English', 'None', '49.186288,0.043709,53.186288,-8.043709', 'None', 'False')")
+            date_str = datetime.datetime.now().year+'-'+datetime.datetime.now().month+'-'+datetime.datetime.now().day
+            conn.execute("insert into collection (username, start, duration, language, keyword, location, user, running) values ('"+session['name']+"', '"+date_str+"', '"+str(duration)+"', 'English', '"+keywords+"', '"+location+"', '"+users+"', 'True')")
             cursor.execute("select consumer_key, consumer_secret, token, token_secret from oauth where username = '"+session['name']+"'")
             row = cursor.fetchone()
             t = threading.Thread(target=collection_thread, args=(duration, keywords, users, location, lang, row,))

@@ -26,7 +26,7 @@ class Streaming:
 
     def thread_update(self, filename):
         print('Importing', filename, '...')
-        file_path = 'streaming/data/'+str(filename)+'.csv'
+        file_path = 'streaming/data/'+self.db_name+'/'+str(filename)+'.csv'
         if filename == 1:
             subprocess.call(['sh', 'stream_run.sh', file_path, self.db_name, self.host, self.port])
         else:
@@ -65,8 +65,8 @@ class Streaming:
                 if tweet.get('text'):
                     print tweet
                     text = tweet['text']
-                    text = text.replace('"',' ')
-                    text = quote(text.replace('\n',' '))
+                    text = text.replace('"', ' ')
+                    text = quote(text.replace('\n', ' '))
                     geo = ''
                     if tweet.get('geo'):
                         geo = str(tweet['geo']['coordinates'][0])+','+str(tweet['geo']['coordinates'][1])
