@@ -58,6 +58,7 @@ def login():
             cursor = conn.cursor()
             cursor.execute("select password, can_collect_tweets from user where username = '"+request.form['username']+"'")
             row = cursor.fetchone()
+            cursor.close()
             if row is not None:
                 password = row[0]
                 if request.form['password'] == password:
@@ -72,9 +73,10 @@ def login():
                     lsa_results[session['name']] = None
                     mabed_results[session['name']] = None
                     queries[session['name']] = Queries(dbname=session['name'], host=host, port=port)
-                    print session['name'], 'can collect tweets:', session['can_collect_tweets']
+                    cursor = conn.cursor()
                     cursor.execute("select * from oauth where username = '"+request.form['username']+"'")
                     row = cursor.fetchone()
+                    cursor.close()
                     if session['can_collect_tweets'] == 'True' and row is None:
                         print session['name'], ' needs to provide access tokens'
                         return redirect(url_for('initialization_page'))
@@ -144,6 +146,7 @@ def collection_dashboard_page():
             cursor = conn.cursor()
             cursor.execute("select start, duration, language, keyword, location, user, running from collection where username = '"+session['name']+"'")
             row = cursor.fetchone()
+            cursor.close()
             if row is not None:
                 corpus_info = row
             print corpus_info
@@ -157,8 +160,9 @@ def collection_dashboard_page2():
     if session['can_collect_tweets'] == 'True':
         conn = sqlite3.connect(user_db_filename)
         cursor = conn.cursor()
-        cursor.execute("select * from oauth where username = '"+session['name']+"' and running = 'True'")
+        cursor.execute("select * from collection where username = '"+session['name']+"' and running = 'True'")
         row = cursor.fetchone()
+        cursor.close()
         if row is None:
             checked_lang = request.form.getlist('lang')
             lang = checked_lang[0]
@@ -180,19 +184,24 @@ def collection_dashboard_page2():
                 location = request.form.get('bounding_box')
             else:
                 location = ""
-            date_str = datetime.datetime.now().year+'-'+datetime.datetime.now().month+'-'+datetime.datetime.now().day
-            conn.execute("insert into collection (username, start, duration, language, keyword, location, user, running) values ('"+session['name']+"', '"+date_str+"', '"+str(duration)+"', 'English', '"+keywords+"', '"+location+"', '"+users+"', 'True')")
+            date_str = str(datetime.datetime.now().year)+'-'+str(datetime.datetime.now().month)+'-'+str(datetime.datetime.now().day)
+            cursor = conn.cursor()
+            cursor.execute("insert into collection (username, start, duration, language, keyword, location, user, running) values ('"+session['name']+"', '"+date_str+"', '"+str(duration)+"', 'English', '"+keywords+"', '"+location+"', '"+users+"', 'True')")
+            conn.commit()
+            cursor.close()
+            cursor = conn.cursor()
             cursor.execute("select consumer_key, consumer_secret, token, token_secret from oauth where username = '"+session['name']+"'")
             row = cursor.fetchone()
-            t = threading.Thread(target=collection_thread, args=(duration, keywords, users, location, lang, row,))
+            cursor.close()
+            t = threading.Thread(target=collection_thread, args=(session['name'], duration, keywords, users, location, lang, row,))
             t.start()
             return collection_dashboard_page()
     else:
         return render_template('collecting.html')
 
 
-def collection_thread(duration, keywords, users, location, language, oauth):
-    s = Streaming(dbname=session['name'], consumer_key=oauth[0], consumer_secret=oauth[1], token=oauth[2], token_secret=oauth[3])
+def collection_thread(db_name, duration, keywords, users, location, language, oauth):
+    s = Streaming(dbname=db_name, consumer_key=oauth[0], consumer_secret=oauth[1], token=oauth[2], token_secret=oauth[3])
     s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
 
 

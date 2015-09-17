@@ -63,7 +63,6 @@ class Streaming:
         for tweet in iterator:
             try:
                 if tweet.get('text'):
-                    print tweet
                     text = tweet['text']
                     text = text.replace('"', ' ')
                     text = quote(text.replace('\n', ' '))
