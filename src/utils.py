@@ -12,6 +12,7 @@ import csv
 def getAuthorName(text, ch = ','):
     return [(' '.join(name.split(' ')[:-1]), name.split(' ')[-1]) for name in text.split(ch)]
 
+
 #this part is for reading the file
 def determineDelimiter(character):
     if character == 't':
@@ -21,7 +22,10 @@ def determineDelimiter(character):
     elif character == 's':
         return ';'
 
-def readCSV(filename, csv_delimiter = ';', header = True):    
+
+def readCSV(filename, csv_delimiter = ';', header = True):
+    data = open(filename, 'rb').read()
+    print data.count('\x00'), 'NULL character(s)'
     with open(filename, 'rU') as csvfile:
         spamreader = csv.reader(csvfile, delimiter = csv_delimiter)        
         if header:    #the csv file contain a header

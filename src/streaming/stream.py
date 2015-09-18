@@ -1,3 +1,4 @@
+# coding: utf-8
 __author__ = "Adrien Guille"
 __license__ = "GNU GPL"
 __version__ = "0.1"
@@ -8,10 +9,11 @@ from twitter import *
 import datetime
 import threading
 import subprocess
+import codecs
 
 
 def quote(string):
-    return '"'+string.encode('utf-8')+'"'
+    return '"'+string+'"'
 
 
 class Streaming:
@@ -38,7 +40,7 @@ class Streaming:
         nb_tweets_infile = 0
         nb_files = 1
         last_import_day = datetime.datetime.now().day
-        file = open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'w')
+        current_file = codecs.open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'w', 'utf-8-sig')
         auth = OAuth(
             consumer_key=self.consumer_key,
             consumer_secret=self.consumer_secret,
@@ -83,7 +85,9 @@ class Streaming:
                     if tweet['user'].get('name'):
                         name = tweet['user']['name']
                     name = quote(name)
-                    file.write(quote(str(tweet['id']))+'\t'+text+'\t'+timestamp+'\t'+quote(str(tweet['user']['id']))+'\t'+geo+'\t'+description+'\t'+name+'\t'+quote(tweet['lang'].upper())+'\n')
+                    formatted_tweet = quote(str(tweet['id']))+'\t'+text+'\t'+timestamp+'\t'+quote(str(tweet['user']['id']))+'\t'+geo+'\t'+description+'\t'+name+'\t'+quote(tweet['lang'].upper())+'\n'
+                    if formatted_tweet.count('\x00') == 0:
+                        current_file.write(unicode(formatted_tweet))
                     if datetime.datetime.now().hour == 0:
                         if not datetime.datetime.now().day == last_import_day:
                             last_import_day = datetime.datetime.now().day
@@ -93,7 +97,7 @@ class Streaming:
                             if current_date <= end_date:
                                 nb_files += 1
                                 nb_tweets_infile = 0
-                                file = open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'a')
+                                current_file = codecs.open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'a', 'utf-8-sig')
                             else:
                                 break
             except:
