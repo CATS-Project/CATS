@@ -11,8 +11,8 @@ import sqlite3
 db_filename = 'users.db'
 
 if len(sys.argv) == 4:
-    if not os.path.exists('streaming/data/'+sys.argv[1]):
-        os.makedirs('streaming/data/'+sys.argv[1])
+    if not os.path.exists('streaming/input/'+sys.argv[1]):
+        os.makedirs('streaming/input/'+sys.argv[1])
         os.makedirs('mabed/input/'+sys.argv[1])
         with sqlite3.connect(db_filename) as conn:
             conn.execute("insert into user (username, password, can_collect_tweets) values ('"+sys.argv[1]+

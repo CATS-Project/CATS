@@ -18,19 +18,19 @@ with sqlite3.connect(db_filename) as conn:
         with open(schema_filename, 'rt') as f:
             schema = f.read()
         conn.executescript(schema)
-        if not os.path.exists('streaming/data/'):
-            os.makedirs('streaming/data/')
+        if not os.path.exists('streaming/input/'):
+            os.makedirs('streaming/input/')
         if not os.path.exists('mabed/input/'):
             os.makedirs('mabed/input/')
 
-        print 'Inserting default data'
+        print 'Inserting default input'
         
         conn.execute("""
         insert into user (username, password, can_collect_tweets)
         values ('demo', 'demo', 'False')
         """)
-        if not os.path.exists('streaming/data/demo'):
-            os.makedirs('streaming/data/demo')
+        if not os.path.exists('streaming/input/demo'):
+            os.makedirs('streaming/input/demo')
         if not os.path.exists('mabed/input/demo'):
             os.makedirs('mabed/input/demo')
 

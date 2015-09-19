@@ -28,7 +28,7 @@ class Streaming:
 
     def thread_update(self, filename):
         print('Importing', filename, '...')
-        file_path = 'streaming/data/'+self.db_name+'/'+str(filename)+'.csv'
+        file_path = 'streaming/input/'+self.db_name+'/'+str(filename)+'.csv'
         if filename == 1:
             subprocess.call(['sh', 'stream_run.sh', file_path, self.db_name, self.host, self.port])
         else:
@@ -40,7 +40,7 @@ class Streaming:
         nb_tweets_infile = 0
         nb_files = 1
         last_import_day = datetime.datetime.now().day
-        current_file = codecs.open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'w', 'utf-8-sig')
+        current_file = codecs.open('streaming/input/'+self.db_name+'/'+str(nb_files)+'.csv', 'w', 'utf-8-sig')
         auth = OAuth(
             consumer_key=self.consumer_key,
             consumer_secret=self.consumer_secret,
@@ -97,7 +97,7 @@ class Streaming:
                             if current_date <= end_date:
                                 nb_files += 1
                                 nb_tweets_infile = 0
-                                current_file = codecs.open('streaming/data/'+self.db_name+'/'+str(nb_files)+'.csv', 'a', 'utf-8-sig')
+                                current_file = codecs.open('streaming/input/'+self.db_name+'/'+str(nb_files)+'.csv', 'a', 'utf-8-sig')
                             else:
                                 break
             except:
