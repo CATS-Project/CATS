@@ -63,7 +63,7 @@ def populateDatabase(elems, language='EN', dbname='TwitterDB', host='localhost',
             language_global = language
             global mode_global
             mode_global = mode
-            no_threads = cpu_count()
+            no_threads = int(cpu_count()/2)
             with ProcessPoolExecutor(max_workers=no_threads) as worker:
                 for result in worker.map(processElement_parallel, elems):
                     if result:
