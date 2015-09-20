@@ -99,6 +99,7 @@ class Streaming:
                                 nb_tweets_infile = 0
                                 current_file = codecs.open('streaming/input/'+self.db_name+'/'+str(nb_files)+'.csv', 'a', 'utf-8-sig')
                             else:
+
                                 break
             except:
                 print 'exception: ', tweet

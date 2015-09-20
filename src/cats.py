@@ -203,7 +203,12 @@ def collection_dashboard_page2():
 def collection_thread(db_name, duration, keywords, users, location, language, oauth):
     s = Streaming(dbname=db_name, consumer_key=oauth[0], consumer_secret=oauth[1], token=oauth[2], token_secret=oauth[3])
     s.collect_tweets(duration=duration, keys=keywords, follow=users, loc=location, lang=language)
-
+    conn = sqlite3.connect(user_db_filename)
+    cursor = conn.cursor()
+    cursor.execute("update collection set running = 'False' where username = '"+session[db_name]+"'")
+    conn.commit()
+    cursor.close()
+    
 
 @app.route('/cats/analysis')
 def analysis_dashboard_page():
