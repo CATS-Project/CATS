@@ -208,7 +208,7 @@ def collection_thread(db_name, duration, keywords, users, location, language, oa
     cursor.execute("update collection set running = 'False' where username = '"+session[db_name]+"'")
     conn.commit()
     cursor.close()
-    
+
 
 @app.route('/cats/analysis')
 def analysis_dashboard_page():
