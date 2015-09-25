@@ -217,7 +217,7 @@ def analysis_dashboard_page():
         dates = ""
         keys = ""
         if session['query'].get("words.word"):
-            keys = ','.join(session['query']["words.word"].get("$in")).replace(' ', ',')
+            keys = ','.join(session['query']["words.word"].get("$in"))
         if session['query'].get("date"):
             dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
         return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
@@ -232,7 +232,9 @@ def analysis_dashboard_page2():
     # lem = LemmatizeText(keywords)
     # lem.createLemmaText()
     # lem.createLemmas()
-    word_list = keywords.split(' ')
+    word_list = []
+    for word in keywords.split(','):
+        word_list.append(word.strip())
     if len(word_list) > 0 and word_list[0] == u'':
         word_list = []
     print word_list
@@ -250,7 +252,7 @@ def analysis_dashboard_page2():
     if session.get('query'):
         queries[session['name']].constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
-    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=keywords.replace(',', ' '), user=session['name'])
+    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=keywords, user=session['name'])
 
 
 @app.route('/cats/about')
