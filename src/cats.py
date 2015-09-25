@@ -233,6 +233,8 @@ def analysis_dashboard_page2():
     # lem.createLemmaText()
     # lem.createLemmas()
     word_list = keywords.split(' ')
+    if len(word_list) > 0 and word_list[0] == u'':
+        word_list = []
     print word_list
     # for word in lem.wordList:
     #    word_list.append(word.word)
