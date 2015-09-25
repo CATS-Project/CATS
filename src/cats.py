@@ -230,16 +230,16 @@ def analysis_dashboard_page2():
     keywords = request.form['keyword']
     date = request.form['date']
     keywords = keywords.replace(',', ' ')
-    lem = LemmatizeText(keywords)
-    lem.createLemmaText()
-    lem.createLemmas()
-    word_list = []
-    for word in lem.wordList:
-        word_list.append(word.word)
+    # lem = LemmatizeText(keywords)
+    # lem.createLemmaText()
+    # lem.createLemmas()
+    word_list = keywords.split(' ')
+    # for word in lem.wordList:
+    #    word_list.append(word.word)
     session['query'] = {}
     session['query_pretty'] = ""
     if word_list:
-        session['query_pretty'] += "Keyword filter: "+','.join(word_list)+"<br/>"
+        session['query_pretty'] += "Keyword filter: "+keywords+"<br/>"
         session['query']["words.word"] = {"$in": word_list}
     if date:
         session['query_pretty'] += "Date filter: "+date+"<br/>"

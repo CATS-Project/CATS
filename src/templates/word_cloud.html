@@ -40,7 +40,7 @@
 				<div role="main">
 					<div id="wordcloud2" class="wordcloud">
 						{% for doc in voc %}
-							{% if doc['word'] == 'amp' %}
+							{% if doc['word'] != 'amp' %}
 								<span data-weight="{{ 500*doc['GTF'] }}"><a href="/cats/analysis/tweets/{{doc['word']}}">{{ doc['word'] }}</a></span>
 					  		{% endif %}
 						{% endfor %}
