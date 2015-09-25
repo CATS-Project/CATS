@@ -229,11 +229,11 @@ def analysis_dashboard_page():
 def analysis_dashboard_page2():
     keywords = request.form['keyword']
     date = request.form['date']
-    keywords = keywords.replace(',', ' ')
     # lem = LemmatizeText(keywords)
     # lem.createLemmaText()
     # lem.createLemmas()
     word_list = keywords.split(' ')
+    print word_list
     # for word in lem.wordList:
     #    word_list.append(word.word)
     session['query'] = {}
@@ -248,7 +248,7 @@ def analysis_dashboard_page2():
     if session.get('query'):
         queries[session['name']].constructVocabulary(query=session['query'])
     tweet_count = get_tweet_count()
-    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=' '.join(word_list), user=session['name'])
+    return render_template('analysis.html', tweetCount=tweet_count, dates=date, keywords=keywords.replace(',', ' '), user=session['name'])
 
 
 @app.route('/cats/about')
