@@ -18,7 +18,7 @@ cleanText = CleanText()
 class Search:
     def __init__(self, searchPhrase, dbname='TwitterDB', host='localhost', port=27017, query=None, k=0):
         self.queries = Queries(dbname=dbname, host=host, port=port)
-        self.words = [word.split('/')[0] for word in cleanText.removeStopWords(cleanText.cleanText(searchPhrase)[0])]
+        self.words = [word.split('/')[0] for word in lemmatize(cleanText.removeStopWords(cleanText.cleanText(searchPhrase)[0]))]
         self.idfs = dict()
         and_list = []
         if self.words:
