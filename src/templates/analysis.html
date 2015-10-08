@@ -40,7 +40,6 @@
 						<li><a href="#tm">Topic modeling</a>
 							<ul>
 								<li><a href="#lda">LDA</a></li>
-								<li><a href="#lsa">LSA</a></li>
 							</ul>
 						</li>
 						<li><a href="#edt">Event detection & tracking</a>
@@ -128,23 +127,6 @@
 			<br/>
 		    <a href="{{ url_for('get_lda_topics') }}"><button>Download topics</button></a>
 		    <a href="{{ url_for('browse_lda_topics') }}"><button>Browse topics</button></a>
-		    <br/>
-		    <br/>
-
-			<h3 id="lsa">LSA</h3>
-
-		    <p>LSA (i.e. Latent Semantic Analysis) is </p>
-
-		    <label>Number of topics (example: "10"):</label>
-			<br/>
-		    <form action="{{ url_for('train_lsa') }}" method="POST"><input type="text" name="k-lsa" class="underlined" style="width: 615px;"/>
-				<br/>
-				<br/>
-		    	<input type="submit" value="Run LSA" class="button"/>
-		    </form>
-			<br/>
-		    <a href="{{ url_for('get_lsa_topics') }}"><button>Download topics</button></a>
-		    <a href="{{ url_for('browse_lsa_topics') }}"><button>Browse topics</button></a>
 		    <br/>
 		    <br/>
 

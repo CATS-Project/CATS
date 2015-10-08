@@ -217,7 +217,7 @@ def analysis_dashboard_page():
         dates = ""
         keys = ""
         if session['query'].get("words.word"):
-            keys = ','.join(session['query'][0]["words.word"].get("$in"))
+            keys = ','.join(session['query']["$or"][0]["words.word"].get("$in"))
         if session['query'].get("date"):
             dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
         return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
