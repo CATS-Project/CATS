@@ -21,6 +21,7 @@ import datetime
 from indexing.queries import Queries
 import sqlite3
 import re
+from bson.regex import Regex
 
 
 # User database
@@ -236,10 +237,14 @@ def analysis_dashboard_page2():
     word_list = []
     hashtags_list = []
     for word in keywords.split(','):
-        word_list.append(word.strip())
-        # create a regex list from search keywords to search in hashtags
-        regex = re.compile(word, re.IGNORECASE)
-        hashtags_list.append(regex)
+        if word.startswith('#'):
+            # create a regex list from search keywords to search in hashtags
+            pattern = re.compile(word[1:])
+            regex = Regex.from_native(pattern)
+            regex.flags ^= re.UNICODE
+            hashtags_list.append(regex)
+        else:
+            word_list.append(word.strip())
     if len(word_list) > 0 and word_list[0] == u'':
         word_list = []
     print word_list
