@@ -236,21 +236,28 @@ def analysis_dashboard_page2():
     hashtags_list = []
     for word in keywords.split(','):
         if word.startswith('#'):
-            # create a regex list from search keywords to search in hashtags
             hashtags_list.append(word.strip())
         else:
             word_list.append(word.strip())
-    if len(word_list) > 0 and word_list[0] == u'':
-        word_list = []
-    print word_list
-    # for word in lem.wordList:
-    #    word_list.append(word.word)
+
+    # remove empty strings if any from lists
+    word_list = filter(None, word_list)
+    hashtags_list = filter(None, hashtags_list)
+   
     session['query'] = {}
     session['query_pretty'] = ""
-    if word_list:
-        session['query_pretty'] += "Keyword filter: "+keywords+"<br/>"
+    if word_list and hashtags_list:
+        session['query_pretty'] += "Keywords and hastags filter: "+keywords+"<br/>"
         # seach in words & hashtags
         session['query']["$or"] = [{"words.word": {"$in": word_list}}, {"hashtags": {"$in": hashtags_list}}]
+    elif word_list:
+        session['query_pretty'] += "Keywords filter: "+keywords+"<br/>"
+        # seach in words
+        session['query']["words.word"] = {"$in": word_list}
+    elif hashtags_list:
+        session['query_pretty'] += "Hashtags filter: "+keywords+"<br/>"
+        # hashtags
+        session['query']["hashtags"] = {"$in": hashtags_list}
     if date:
         session['query_pretty'] += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 

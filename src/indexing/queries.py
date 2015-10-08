@@ -35,16 +35,15 @@ class Queries:
         if query:
             query_new = query.copy()
             or_list = []
-            ok = False
-            if query.get('$or', -1) != -1:
-                for elem in query["$or"]:
+            if query_new.get('$or', -1) != -1:
+                for elem in query_new["$or"]:
                     if elem.get('hashtags', -1) != -1:
                         or_list.append({'hashtags': {'$in': self.constructHashtags(elem['hashtags']['$in'])}})
-                        ok = True
                     else:
                         or_list.append(elem)
-                if ok:
-                    query_new['$or'] = or_list
+                query_new['$or'] = or_list
+            elif query_new.get('hashtags', -1) != -1:
+                query_new['hashtags'] = {'$in': self.constructHashtags(query_new['hashtags']['$in'])}
             return query_new
         else:
             return query
@@ -113,7 +112,48 @@ class Queries:
             pass
 
 if __name__ == "__main__":
-    queries = Queries('TwitterDB', 'localhost', 27017)
-    queries.constructVocabulary()
+    queries = Queries('TwitterDB_demo', 'localhost', 27017)
+    # queries.constructVocabulary()
     # x = queries.getOneWord(query={'word': 'fuck'}, fields={'IDF': 1}, existing=False)['IDF']
-    print x
+    # print x
+    
+    query = { "$or": [ {'words.word': {"$in": ['cat', 'dog']}},  {"hashtags": {"$in": ['#bbc', '#debate']}} ], "date": {"$gt": '2012-01-02', "$lte": "2013-01-02"} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
+    query = { "$or": [ {'words.word': {"$in": ['cat', 'dog']}},  {"hashtags": {"$in": ['#bbc', '#debate']}} ] } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
+    query = { "hashtags": {"$in": ['#bbc', '#debate']}, "date": {"$gt": '2012-01-02', "$lte": "2013-01-02"} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
+    query = { "hashtags": {"$in": ['#bbc', '#debate']} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
+    query = { 'words.word': {"$in": ['cat', 'dog']}, "date": {"$gt": '2012-01-02', "$lte": "2013-01-02"} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
+    query = { 'words.word': {"$in": ['cat', 'dog']} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+
+    query = { "date": {"$gt": '2012-01-02', "$lte": "2013-01-02"} } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+
+    query = { } 
+    print query
+    print queries.reconstructQuery(query)
+    print query
+    
