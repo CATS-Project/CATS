@@ -71,6 +71,7 @@ class Queries:
             self.db.documents.ensure_index([('gender', pymongo.ASCENDING)])
             self.db.documents.ensure_index([('age', pymongo.ASCENDING)])
             self.db.documents.ensure_index([('words.word', pymongo.ASCENDING)])
+            self.db.documents.ensure_index([('hashtags', pymongo.ASCENDING)])
         except pymongo.errors.DuplicateKeyError:
             pass
 

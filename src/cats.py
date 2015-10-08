@@ -233,8 +233,11 @@ def analysis_dashboard_page2():
     # lem.createLemmaText()
     # lem.createLemmas()
     word_list = []
+    hashtags_list = []
     for word in keywords.split(','):
         word_list.append(word.strip())
+        # create a hashtag list from search keywords
+        hashtags_list.append('#' + word.strip())
     if len(word_list) > 0 and word_list[0] == u'':
         word_list = []
     print word_list
@@ -244,7 +247,8 @@ def analysis_dashboard_page2():
     session['query_pretty'] = ""
     if word_list:
         session['query_pretty'] += "Keyword filter: "+keywords+"<br/>"
-        session['query']["words.word"] = {"$in": word_list}
+        # seach in words & hashtags
+        session['query']["$or"] = [{"words.word": {"$in": word_list}}, {"hashtags": {"$in": hashtags_list}}]
     if date:
         session['query_pretty'] += "Date filter: "+date+"<br/>"
         start, end = date.split(" ") 
