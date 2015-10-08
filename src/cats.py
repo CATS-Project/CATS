@@ -239,7 +239,7 @@ def analysis_dashboard_page2():
     for word in keywords.split(','):
         if word.startswith('#'):
             # create a regex list from search keywords to search in hashtags
-            pattern = re.compile(word[1:])
+            pattern = re.compile(word[1:], re.IGNORECASE)
             regex = Regex.from_native(pattern)
             regex.flags ^= re.UNICODE
             hashtags_list.append(regex)
