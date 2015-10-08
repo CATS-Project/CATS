@@ -22,16 +22,16 @@ class Queries:
         self.dbname = dbname
         self.db = client[self.dbname]
 
-    def constructHashtags(keywords):
-    hashtags_list = []
-    for word in keywords:
-        pattern = re.compile(word[1:], re.IGNORECASE)
-        regex = Regex.from_native(pattern)
-        regex.flags ^= re.UNICODE
-        hashtags_list.append(regex)
-    return hashtags_list
+    def constructHashtags(self, keywords):
+        hashtags_list = []
+        for word in keywords:
+            pattern = re.compile(word[1:], re.IGNORECASE)
+            regex = Regex.from_native(pattern)
+            regex.flags ^= re.UNICODE
+            hashtags_list.append(regex)
+        return hashtags_list
 
-    def reconstructQuery(query):
+    def reconstructQuery(self, query):
         if query:
             query_new = query.copy()
             or_list = []
@@ -39,7 +39,7 @@ class Queries:
             if query.get('$or', -1) != -1:
                 for elem in query["$or"]:
                     if elem.get('hashtags', -1) != -1:
-                        or_list.append({'hashtags': {'$in': constructHashtags(elem['hashtags']['$in'])}})
+                        or_list.append({'hashtags': {'$in': self.constructHashtags(elem['hashtags']['$in'])}})
                         ok = True
                     else:
                         or_list.append(elem)
@@ -50,21 +50,21 @@ class Queries:
             return query
 
     def countDocuments(self, query=None):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         return self.db.documents.find(query_new).count()
 
     def dropDocuments(self):
         self.db.documents.drop()
 
     def getOneWord(self, query=None, fields=None, existing=False):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         if existing:
             return self.db.vocabulary_query.find_one(query_new, fields)
         else:
             return self.db.vocabulary.find_one(query_new, fields)
 
     def getWords(self, query=None, fields=None, limit=0, existing=False):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         if existing:
             return self.db.vocabulary_query.find(query_new, fields, limit=limit, sort=[('IDF',pymongo.ASCENDING)])
         else:
@@ -72,7 +72,7 @@ class Queries:
 
     def getNamedEntities(self, query=None, limit=0):
         if query:
-            query_new = reconstructQuery(query)
+            query_new = self.reconstructQuery(query)
             # if there is a query then we construct a smaller NE_INDEX
             query_ner = {'namedEntities': {'$exists': 'true'}}
             query_ner.update(query_new)
@@ -83,21 +83,21 @@ class Queries:
             return self.db.named_entities.find(sort=[('count',pymongo.DESCENDING)], limit=limit)
 
     def constructVocabulary(self, query=None):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         vocab = VocabularyIndex(dbname=self.dbname, host=self.host, port=self.port)
         vocab.createIndex(query_new)
 
     def constructNamedEntities(self, query=None):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         ner = NEIndex(dbname=self.dbname, host=self.host, port=self.port)
         ner.createIndex(query_new)
 
     def getDocuments(self, query=None, fields=None):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         return self.db.documents.find(query_new, fields)
 
     def getOneDocument(self, query=None, fields=None):
-        query_new = reconstructQuery(query)
+        query_new = self.reconstructQuery(query)
         return self.db.documents.find_one(query_new, fields)
 
 
