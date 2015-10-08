@@ -20,6 +20,7 @@ from streaming.stream import Streaming
 import datetime
 from indexing.queries import Queries
 import sqlite3
+import re
 
 
 # User database
@@ -236,8 +237,9 @@ def analysis_dashboard_page2():
     hashtags_list = []
     for word in keywords.split(','):
         word_list.append(word.strip())
-        # create a hashtag list from search keywords
-        hashtags_list.append('#' + word.strip())
+        # create a regex list from search keywords to search in hashtags
+        regex = re.compile(word, re.IGNORECASE)
+        hashtags_list.append(regex)
     if len(word_list) > 0 and word_list[0] == u'':
         word_list = []
     print word_list
