@@ -71,10 +71,9 @@ class Queries:
 
     def getNamedEntities(self, query=None, limit=0):
         if query:
-            query_new = self.reconstructQuery(query)
             # if there is a query then we construct a smaller NE_INDEX
             query_ner = {'namedEntities': {'$exists': 'true'}}
-            query_ner.update(query_new)
+            query_ner.update(query)
             self.constructNamedEntities(query=query_ner)
             return self.db.named_entities_query.find(sort=[('count',pymongo.DESCENDING)], limit=limit)
         else:
