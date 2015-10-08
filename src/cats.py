@@ -20,8 +20,6 @@ from streaming.stream import Streaming
 import datetime
 from indexing.queries import Queries
 import sqlite3
-import re
-from bson.regex import Regex
 
 
 # User database
@@ -239,10 +237,7 @@ def analysis_dashboard_page2():
     for word in keywords.split(','):
         if word.startswith('#'):
             # create a regex list from search keywords to search in hashtags
-            pattern = re.compile(word[1:], re.IGNORECASE)
-            regex = Regex.from_native(pattern)
-            regex.flags ^= re.UNICODE
-            hashtags_list.append(regex)
+            hashtags_list.append(word.strip())
         else:
             word_list.append(word.strip())
     if len(word_list) > 0 and word_list[0] == u'':
