@@ -44,6 +44,9 @@ mabed_results = {}
 app = Flask(__name__)
 app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 
+# Global keys and dates
+keys = ""
+dates = ""
 
 @app.route('/cats')
 def index():
@@ -214,12 +217,8 @@ def collection_thread(db_name, duration, keywords, users, location, language, oa
 def analysis_dashboard_page():
     if session.get('name') is not None:
         tweet_count = get_tweet_count()
-        dates = ""
-        keys = ""
-        if session['query'].get("words.word"):
-            keys = ','.join(session['query']["$or"][0]["words.word"].get("$in"))
-        if session['query'].get("date"):
-            dates = session['query']['date'].get("$gt")+' '+session['query']['date'].get("$lte")
+        global keys
+        global dates
         return render_template('analysis.html', tweetCount=tweet_count, dates=dates, keywords=keys, user=session['name'])
     else:
         return redirect(url_for('login'))
@@ -227,8 +226,12 @@ def analysis_dashboard_page():
 
 @app.route('/cats/analysis', methods=['POST'])
 def analysis_dashboard_page2():
+    global keys
+    global dates
     keywords = request.form['keyword']
+    keys = keywords
     date = request.form['date']
+    dates = date
     # lem = LemmatizeText(keywords)
     # lem.createLemmaText()
     # lem.createLemmas()
@@ -507,4 +510,5 @@ def browse_events():
 if __name__ == '__main__':
     # Demo
     app.run(debug=True, host='mediamining.univ-lyon2.fr', port=1988)
+    # app.run(debug=True, host='localhost', port=5001)
 
