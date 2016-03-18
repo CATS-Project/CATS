@@ -38,7 +38,7 @@
         <c:if test="${!user.hasAllTheirTokens()}">
             <li class="waves-effect waves-red"><a href="<c:url value="/associate"/>">Associate my twitter account</a></li>
         </c:if>
-        <li class="waves-effect waves-red" style="background-color: #FF9D9D;"><a href="<c:url value="/logout"/>">Disconnect</a></li>
+        <li class="waves-effect waves-blue" style="background-color: #55acee;"><a href="<c:url value="/logout"/>">Disconnect</a></li>
 
     </ul>
 </header>
