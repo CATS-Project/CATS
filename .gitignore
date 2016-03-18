@@ -1,1 +1,5 @@
-
+*.iml
+/.idea
+/src/webapp/src/main/java/cats/twitter/security/AdminLogin.properties
+/src/model/src/main/resources/config/context-datasource.xml
+.DS_Store

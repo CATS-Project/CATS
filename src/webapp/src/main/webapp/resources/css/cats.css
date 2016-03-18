@@ -1,0 +1,37 @@
+header, main, footer {
+    padding-left: 150px;
+}
+
+header nav .page-title{
+    font-size: 48px;
+    line-height: 122px;
+}
+
+header nav.top-nav{
+    height: 122px;
+}
+
+input.no-margin{
+    margin: 0;
+}
+
+input.no-padding{
+    padding: 0;
+}
+
+#map {
+    height: 100%;
+}
+
+ul#nav-mobile li:first-child{
+    margin-top: 2rem;
+}
+
+.subCorpuses{
+	margin-left: 35px !important;
+	color:#4B3ACE !important;
+}
+
+.btn{
+    background-color: #000088;
+}
