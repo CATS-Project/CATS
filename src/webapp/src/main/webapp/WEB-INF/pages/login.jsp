@@ -44,13 +44,37 @@
                 </div>
                 <div class="col s6">
                    <a class=".right-align btn waves-effect waves-light" href="<c:url value="/register"></c:url>">
-		                New User ?
+		                REGISTER
 		            </a>
                 </div>
             </div>
             
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         </form>
+        <h4>About CATS</h4>
+		<p>Twitter presents an unparalleled opportunity for researchers from various fields to gather valuable and genuine textual data from millions of people. However, the collection process, as well as the analysis of these data require different kinds of skills (e.g. programing, data mining) which can be an obstacle for people who do not have this background.</p>
+		<p>CATS (i.e. Collection and Analysis of Tweets made Simple) is an open-source, scalable, Web-application designed to support researchers who want to carry out studies based on tweets. The purpose of CATS is twofold: (i) allow people to collect tweets (ii) enable them to analyze these tweets thanks to efficient tools (e.g. event detection, topic modeling, named-entity recognition).</p>
+        <p>To learn more about CATS, check out:
+            <ul>
+                <li>The wiki: <a href="https://github.com/CATS-Project/CATS/wiki">https://github.com/CATS-Project/CATS/wiki</a></li>
+                <li>The paper: <a href="http://dl.acm.org/citation.cfm?id=2874320">http://dl.acm.org/citation.cfm?id=2874320</a></li>
+                <li>The source code: <a href="https://github.com/CATS-Project/CATS/">https://github.com/CATS-Project/CATS/</a></li>
+            </ul>
+        </p>
+
+        <h4>Contributors</h4>
+        <p>
+        Current contributors:
+            <ul>
+                <li><a href="http://mediamining.univ-lyon2.fr/people/guille">Adrien Guille</a>, PhD in Computer Science</li>
+                <li><a href="http://univ-lyon2.academia.edu/MichaelGauthier">Michael Gauthier</a>, PhD student in Socio-Linguistics</li>
+                <li><a href="https://www.linkedin.com/in/anthony-deseille-775301b3">Anthony Deseille</a>, Graduate student in Computer Science</li>
+            </ul>
+        Past contributors:
+            <ul>
+                <li>Ciprian-Octavian Truica, PhD student in Computer Science</li>
+            </ul>
+        </p>
     </div>
 </div>
 </body>
