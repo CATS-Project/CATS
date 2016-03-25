@@ -33,6 +33,26 @@ ul#nav-mobile li:first-child{
 }
 
 .btn{
-    background-color: #000088;
+    background-color: #66757f;
     width: 30em;
+}
+
+.btn:hover {
+	background-color: #292f33;
+}
+
+nav {
+    background-color: #55acee;
+}
+
+.valid {
+	border-bottom-color: #292f33;
+}
+
+.active {
+	color: #292f33;
+}
+
+.collection a.collection-item {
+	color: #55acee;
 }

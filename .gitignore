@@ -6,3 +6,6 @@
 /src/model/target
 .DS_Store
 src/.idea/
+/nbproject/
+build.xml
+manifest.mf
