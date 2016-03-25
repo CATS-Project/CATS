@@ -18,8 +18,12 @@ public interface TweetRepository extends  SolrRepository<Tweet, Long>, JpaReposi
     List<Tweet> findAll();
     
     Page<Tweet> findByCorpusId(Long corpusId,Pageable pageable);
+    Page<Tweet> findBySubCorpusId(Long subCorpusId, Pageable pageable);
 
     Long countByCorpusId(Long corpusId);
-    
+    Long countBySubCorpusId(Long corpusId);
+
     List<Tweet> findByCorpusId(Long corpusId);
+    List<Tweet> findBySubCorpusId(Long subCorpusId);
+
 }

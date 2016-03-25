@@ -12,10 +12,10 @@ import cats.twitter.model.User;
  */
 public interface SubCorpusService
 {
-	SubCorpus createSubCorpus(long corpusId, String name, Optional<String> regexp, Optional<String[]> hashtags,
+	SubCorpus createSubCorpus(Long corpusId, String name, Optional<String> regexp, Optional<String[]> hashtags,
 		Optional<String[]> mentions);
 
-	public SubCorpus getSubCorpus(long subId);
+	public SubCorpus getSubCorpus(Long subId);
 
-	void exportCSV(User user, long id, Writer writer) throws IOException;
+	void exportCSV(User user, Long id, Writer writer) throws IOException;
 }

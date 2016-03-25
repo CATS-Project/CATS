@@ -10,5 +10,5 @@ import cats.twitter.model.SubCorpus;
 
 public interface SubCorpusRepository extends JpaRepository<SubCorpus, Long>
 {
-
+    SubCorpus findById(Long id);
 }

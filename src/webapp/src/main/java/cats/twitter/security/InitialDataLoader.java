@@ -47,7 +47,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 	{
 		Properties properties = new Properties();
 		try {
-			properties.load(new FileInputStream("cats/twitter/security/AdminLogin.properties"));
+			properties.load(new FileInputStream("/Users/Anthony/Documents/Master/Stage/CATS/src/webapp/src/main/java/cats/twitter/security/AdminLogin.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -69,7 +69,17 @@ public class Corpus implements Serializable
 	private Location location;
 
 	private Date lauchDate;
+
+	public String getLang() {
+		return lang;
+	}
+
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
+
 	private Date stopDate;
+	private String lang;
 
 	@Enumerated(EnumType.STRING)
 	private Collect.State state;

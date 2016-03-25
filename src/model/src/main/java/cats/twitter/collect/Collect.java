@@ -31,22 +31,26 @@ public class Collect extends Observable implements ICollect, Runnable {
     private TwitterStream twitterStream;
     private Calendar dateEnd;
     private int duree;
+
+
+
     private List<Tweet> tweets;
 
     private CorpusRepository corpusRepository;
     private TweetRepository tweetRepository;
 
-    public Collect(User user, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location, CorpusRepository repository, TweetRepository tweetRepository){
+    public Collect(User user, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location, Optional<String> lang, CorpusRepository repository, TweetRepository tweetRepository){
         this.tweetRepository = tweetRepository;
         this.corpusRepository = repository;
         tweets  = new ArrayList<>();
         corpus = new Corpus();
         corpus.setName(name);
         corpus.setDuree(duree);
-        corpus.setKeyWords(keywords.isPresent()?keywords.get():null);
-        corpus.setFollows(followsString.isPresent()?followsString.get():null);
-        corpus.setLocation(location.isPresent()?location.get():null);
+        corpus.setKeyWords(keywords.isPresent() ? keywords.get() : null);
+        corpus.setFollows(followsString.isPresent() ? followsString.get() : null);
+        corpus.setLocation(location.isPresent() ? location.get() : null);
         corpus.setUser(user);
+        corpus.setLang(lang.isPresent() ? lang.get() : null);
         corpus = corpusRepository.save(corpus);
 
         this.user = user;
@@ -95,23 +99,26 @@ public class Collect extends Observable implements ICollect, Runnable {
                 if (!corpus.getState().equals(State.INPROGRESS)){
                     setStatus(State.INPROGRESS);
                 }
-
-                System.out.println(status.getText());
                 if (status.getCreatedAt().after(dateEnd.getTime())){
                     twitterStream.shutdown();
                 }
-                Tweet t = new Tweet();
-                t.setText(status.getText());
-                t.setAuthor(status.getUser().getId());
-                t.setId(status.getId());
-                t.setDate(status.getCreatedAt());
-                if(status.getGeoLocation() != null)
-                    t.setLocation(status.getGeoLocation().toString());
-                t.setName(status.getUser().getName());
-                t.setDescriptionAuthor(status.getUser().getDescription());
-                t.setCorpus(corpus);
-                if(tweetRepository != null)
-                    tweetRepository.save(t);
+                if(corpus.getLang() == null || corpus.getLang().equals(status.getLang()))
+                {
+                    Tweet t = new Tweet();
+                    t.setText(status.getText().replace("\r", "\n"));
+                    t.setAuthor(status.getUser().getId());
+                    t.setId(status.getId());
+                    t.setDate(status.getCreatedAt());
+                    if(status.getGeoLocation() != null)
+                        t.setLocation(status.getGeoLocation().toString());
+                    t.setName(status.getUser().getName());
+                    t.setDescriptionAuthor(status.getUser().getDescription());
+                    t.setLang(status.getLang());
+                    t.setCorpus(corpus);
+                    if(tweetRepository != null)
+                        tweetRepository.save(t);
+                }
+
             }
 
             @Override
@@ -184,4 +191,7 @@ public class Collect extends Observable implements ICollect, Runnable {
         public boolean isShutdown(){return equals(SHUTDOWN);}
         public boolean isWaitingForConnection(){return equals(WAITING_FOR_CONNECTION);}
     }
+
+
 }
+

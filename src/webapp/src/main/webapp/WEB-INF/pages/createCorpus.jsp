@@ -8,7 +8,11 @@
         <script src="<c:url value="/resources/js/angular.min.js"/>"></script>
         <script src="<c:url value="/resources/js/corpus-form.js"/>"></script>
         <script src="<c:url value="/resources/js/draw_map.js"/>"></script>
-        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('select').material_select();
+            });
+        </script>
     </jsp:attribute>
     <jsp:body>
         <ul class="collapsible" data-collapsible="accordion">
@@ -60,7 +64,55 @@
                                     <label for="name">New corpus name</label>
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <select name="lang" id="lang">
+                                        <option value="" disabled selected>Choose your language (Optional)</option>
+                                        <option value="fr">French</option>
+                                        <option value="en">English</option>
+                                        <option value="ar">Arabic</option>
+                                        <option value="ja">Japanese</option>
+                                        <option value="es">Spanish</option>
+                                        <option value="de">German</option>
+                                        <option value="it">Italian</option>
+                                        <option value="id">Indonesian</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="ko">Korean</option>
+                                        <option value="tr">Turkish</option>
+                                        <option value="ru">Russian</option>
+                                        <option value="nl">Dutch</option>
+                                        <option value="fil">Filipino</option>
+                                        <option value="msa">Malay</option>
+                                        <option value="zh-tw">Traditional Chinese</option>
+                                        <option value="zh-cn">Simplified Chinese</option>
+                                        <option value="hi">Hindi</option>
+                                        <option value="no">Norwegian</option>
+                                        <option value="sv">Swedish</option>
+                                        <option value="fi">Finnish</option>
+                                        <option value="da">Danish</option>
+                                        <option value="pl">Polish</option>
+                                        <option value="fa">Farsi</option>
+                                        <option value="he">Hebrew</option>
+                                        <option value="ur">Urdu</option>
+                                        <option value="th">Thai</option>
+                                        <option value="en-gb">English UK</option>
+                                    </select>
+                                    <label for="lang">Language</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <label>Filter: </label><br>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input name="filter" type="radio" id="Map" data-ng-model="filter" value="map"/>
+                                    <label for="Map">Map</label>
+                                    <input name="filter" type="radio" id="User" value="user"/>
+                                    <label for="User">User</label>
+                                    <input name="filter" type="radio" id="Keywords" value="keyword"/>
+                                    <label for="Keywords">Keywords</label>
+                                </div>
+                            </div>
                             <c:forEach items="${forms}" var="field">
                                 <jsp:include page="${field.value}" />
                             </c:forEach>
@@ -74,7 +126,29 @@
                 </li>
             </c:if>
         </ul>
+        <script type="text/javascript">
 
+            $("input[name='filter']").on("change", function(){
+                var filter = $('input[name=filter]:checked').val();
+                console.log(filter);
+                if($('input[name=filter]:checked').val() == "map"){
+                    $("#divMap").removeClass("hide");
+                    $("#divUser").addClass("hide");
+                    $("#divKey").addClass("hide");
+                }
+                if($('input[name=filter]:checked').val() == "user"){
+                    $("#divUser").removeClass("hide");
+                    $("#divMap").addClass("hide");
+                    $("#divKey").addClass("hide");
+                }
+                if($('input[name=filter]:checked').val() == "keyword"){
+                    $("#divKey").removeClass("hide");
+                    $("#divMap").addClass("hide");
+                    $("#divUser").addClass("hide");
+                }
+
+            })
+        </script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg3Kf8HbtHpqVtSoqybLSx_dzFxodJxsM&signed_in=true&libraries=drawing&callback=initMap"
                 async defer></script>
     </jsp:body>

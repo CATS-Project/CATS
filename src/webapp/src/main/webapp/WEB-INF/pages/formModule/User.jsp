@@ -6,7 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<div class="row" data-ng-controller="KeyWordsController">
+
+<div class="row hide" id="divUser" data-ng-controller="KeyWordsController">
     <div class="input-field col s12">
         <h5>User filter</h5>
         <ul class="add-list">

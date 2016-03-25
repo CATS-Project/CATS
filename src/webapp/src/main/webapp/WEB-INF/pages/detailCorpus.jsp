@@ -59,13 +59,14 @@
             <c:if test="${corpus.state.waitingForConnection}">
                 <div>The connection is establishing, please wait...</div>
             </c:if>
-        </div>
-
-        <div class="row">
-            <div class="col s12">
+            <div class="col 6">
                 <a class="waves-effect waves-light btn blue" href="<c:url value="/corpus/${corpus.id}/1"/>">
                     <i class="material-icons right">toc</i>See the corpus content</a>
             </div>
+        </div>
+
+        <div class="row">
+
         </div>
 
         <div class="row">
@@ -108,7 +109,7 @@
                                     <c:if test="${corpus.state.inprogress}">Currently Running</c:if></td>
                             </tr>
                             <tr>
-                                <td>Criterias:</td>
+                                <td>Criteria:</td>
                                 <td></td>
                             </tr>
 
@@ -179,7 +180,7 @@
                                         </c:forEach>
                                     </c:if>
                                     <c:if test="${!request.finished}">
-                                        <p>Your treatment is not finished</p>
+                                        <p>Running…</p>
                                     </c:if>
 
                                 </div>

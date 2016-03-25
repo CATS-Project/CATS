@@ -8,6 +8,7 @@ Array.prototype.remove = function(from, to) {
 };
 
 myApp.controller('KeyWordsController', ['$scope', function($scope) {
+
     $scope.keywords = [''];
 
     $scope.remove = function(i){
@@ -18,7 +19,9 @@ myApp.controller('KeyWordsController', ['$scope', function($scope) {
         if(i == $scope.keywords.length-1)
             $scope.keywords.push('');
     };
+
 }]);
+
 myApp.directive('submitListener',function(){
     return {
         link: function(scope, element) {

@@ -28,9 +28,9 @@
     <ul id="nav-mobile" class="side-nav fixed" style="width: 240px;">
         <li class="center no-hover"><img src="${user.imageUrl}"></li>
         <li class="center no-hover"><h4>${user.twitterName}</h4></li>
-        <li class="waves-effect waves-red"><a href="<c:url value="/corpus"/>">My corpuses (${user.corpus.size()})</a></li>
+        <li class="waves-effect waves-red"><a href="<c:url value="/corpus"/>">My corpora (${user.corpus.size()})</a></li>
         <li class="waves-effect waves-red"><a href="<c:url value="/corpus/create"/>">Create a new corpus</a></li>
-        <li class="waves-effect waves-red"><a href="<c:url value="/sub"/>">Create a sub corpus</a></li>
+        <li class="waves-effect waves-red"><a href="<c:url value="/sub"/>">Create a sub-corpus</a></li>
         <sec:authorize access="hasAuthority('ROLE_ADMIN')">
             <li class="waves-effect waves-red"><a href="<c:url value="/admin/accounts"/>">Manage user accounts</a></li>
             <li class="waves-effect waves-red"><a href="<c:url value="/admin/modules"/>">Manage modules</a></li>

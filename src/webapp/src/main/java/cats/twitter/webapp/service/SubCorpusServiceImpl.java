@@ -34,7 +34,7 @@ public class SubCorpusServiceImpl implements SubCorpusService
 	SubCorpusRepository subRepository;
 
 	@Transactional
-	public SubCorpus getSubCorpus(long subId)
+	public SubCorpus getSubCorpus(Long subId)
 	{
 		SubCorpus sub = subRepository.findOne(subId);
 		sub.lazyLoad();
@@ -43,7 +43,7 @@ public class SubCorpusServiceImpl implements SubCorpusService
 
 	@Override
 	@Transactional
-	public void exportCSV(User user, long id, Writer writer) throws IOException
+	public void exportCSV(User user, Long id, Writer writer) throws IOException
 	{
 		// uses the Super CSV API to generate CSV data from the model data
 		ICsvBeanWriter csvWriter = new CsvBeanWriter(writer,
@@ -85,7 +85,7 @@ public class SubCorpusServiceImpl implements SubCorpusService
 					}
 					if (!isFiltered)
 					{
-						csvWriter.write(atweet,headers);
+						csvWriter.write(atweet, headers);
 					}
 				}
 			}
@@ -102,14 +102,14 @@ public class SubCorpusServiceImpl implements SubCorpusService
 	}
 
 	@Transactional
-	public SubCorpus createSubCorpus(long corpusId, String name, Optional<String> regexp, Optional<String[]> hashtags,
+	public SubCorpus createSubCorpus(Long corpusId, String name, Optional<String> regexp, Optional<String[]> hashtags,
 		Optional<String[]> mentions)
 	{
-		Corpus corp = corpusRepository.findOne(corpusId);
+		Corpus corpus = corpusRepository.findOne(corpusId);
 		SubCorpus sub = new SubCorpus();
 		sub.setCreationDate(new Date());
 		sub.setName(name);
-		sub.setCorpus(corp);
+		sub.setCorpus(corpus);
 		if (regexp.isPresent())
 		{
 			sub.setRegex(regexp.get());
@@ -122,6 +122,62 @@ public class SubCorpusServiceImpl implements SubCorpusService
 		{
 			sub.setMentions(mentions.get());
 		}
+
+
+		Pattern pRegex = Pattern.compile(sub.getRegex());
+		Pattern pTags;
+		Matcher m;
+		Boolean isFiltered = false;
+		if (corpus != null)
+		{
+			for (Tweet atweet : corpus.getTweets())
+			{
+				m = pRegex.matcher(atweet.getText());
+				if (m.find())
+				{
+					if(hashtags.isPresent()){
+						for (String tag : sub.getHashtags())
+						{
+							pTags = Pattern.compile("#" + tag);
+							m = pTags.matcher(atweet.getText());
+							if (!m.find())
+							{
+								isFiltered = true;
+							}
+						}
+					}
+					if (mentions.isPresent())
+					{
+						for (String mention : sub.getMentions())
+						{
+							pTags = Pattern.compile("@" + mention);
+							m = pTags.matcher(atweet.getText());
+							if (!m.find())
+							{
+								isFiltered = true;
+							}
+						}
+					}
+
+					if (!isFiltered)
+					{
+						Tweet t = new Tweet();
+						t.setText(atweet.getText());
+						t.setAuthor(atweet.getAuthor());
+						t.setDate(atweet.getDate());
+						t.setLocation(atweet.getLocation());
+						t.setName(atweet.getName());
+						t.setDescriptionAuthor(atweet.getDescriptionAuthor());
+						t.setSubCorpus(sub);
+					}
+				}
+				isFiltered = false;
+			}
+		}
+		else
+			throw new NotFoundException();
+
+
 		return subRepository.save(sub);
 	}
 }

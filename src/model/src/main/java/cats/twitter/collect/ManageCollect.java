@@ -30,9 +30,9 @@ public class ManageCollect  implements IManageCollect, Observer {
     private CorpusRepository corpusRepository;
 
     @Override
-    public Corpus addCollect(User u, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location, TweetRepository tweetRepository) {
+    public Corpus addCollect(User u, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location, Optional<String> lang, TweetRepository tweetRepository) {
         System.out.println("Debug");
-        Collect c = new Collect(u, name, duree, keywords, followsString, follows, location,this.corpusRepository, tweetRepository);
+        Collect c = new Collect(u, name, duree, keywords, followsString, follows, location,lang, this.corpusRepository, tweetRepository);
 
         c.addObserver(this);
         collects.put(c.getCorpus(),c);

@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
 <t:wrapper title="Display corpus">
@@ -41,7 +42,7 @@
             </c:if>
         </div>
 
-        <div class="row">
+        <%--<div class="row">
             <form action="<c:url value="/corpus/search"/>" method="post">
                 <div class="input-field col s6">
                   <input value="" id="search" type="text" class="validate">
@@ -50,7 +51,7 @@
 
                 <button style="margin-top:25px;" class="btn waves-effect waves-light" type="submit" name="action">SEARCH</button>
             </form>
-        </div>
+        </div>--%>
 
 
 
@@ -58,26 +59,19 @@
             <table>
                 <thead>
                     <tr>
-                        <th data-field="descriptionauthor">Description Author</th>
-                        <th data-field="location">Location</th>
                         <th data-field="name">Name</th>
                         <th data-field="text">Text</th>
-                        <th data-field="text">Robot</th>
+                        <th data-field="descriptionauthor">Description Author</th>
+                        <th data-field="date">Date</th>
                     </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="entry" items="${list}" >
                     <tr>
-                        <td>${entry.descriptionAuthor}</td>
-                        <td>${entry.location}</td>
                         <td>${entry.name}</td>
                         <td>${entry.text}</td>
-                        <td>
-                            <p>
-                                <input type="checkbox" class="filled-in" id="${entry.id}" />
-                                <label for="${entry.id}"></label>
-                            </p>
-                        </td>
+                        <td>${entry.descriptionAuthor}</td>
+                        <td><fmt:formatDate value="${entry.date}" pattern="yyyy-MM-dd HH:mm" /></td>
                     </tr>
                 </c:forEach>
                 </tbody>

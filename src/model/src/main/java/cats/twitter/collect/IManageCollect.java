@@ -11,7 +11,7 @@ import cats.twitter.repository.TweetRepository;
 
 import java.util.Optional;
 public interface IManageCollect {
-    Corpus addCollect(User u, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location, TweetRepository corpusRepository);
+    Corpus addCollect(User u, String name, int duree, Optional<String[]> keywords, Optional<String[]> followsString, Optional<Long[]> follows, Optional<double[][]> location,Optional<String> lang, TweetRepository corpusRepository);
 
     Optional<Corpus> getCorpusFromUser(User user, long id);
 

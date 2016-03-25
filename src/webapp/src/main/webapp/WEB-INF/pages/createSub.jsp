@@ -36,12 +36,12 @@
                 </div>
                 
                 <div class="row">
-                	<label for="hashtags">Hashtags (Seperate different hashtags with ',')</label>
+                	<label for="hashtags">Hashtags (Separate different hashtags with ',')</label>
                 	<input id="hashtags" type="text" class="validate" name="hashtags">
                 </div>
                 
                 <div class="row">
-                	<label for="mentions">Mentions  (Seperate different mentions with ',')</label>
+                	<label for="mentions">Mentions  (Separate different mentions with ',')</label>
                 	<input id="mentions" type="text" class="validate" name="mentions">
                 </div>
                 

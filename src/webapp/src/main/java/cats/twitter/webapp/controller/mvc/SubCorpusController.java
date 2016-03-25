@@ -7,9 +7,12 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import cats.twitter.repository.SubCorpusRepository;
+import cats.twitter.repository.TweetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +39,7 @@ public class SubCorpusController
 {
 	private final Logger log = LoggerFactory.getLogger(SubCorpusController.class);
 
+
 	/**
 	 * @param principal
 	 *            Current authenticated user
@@ -44,7 +48,11 @@ public class SubCorpusController
 	@Autowired
 	CorpusRepository corpusRepository;
 	@Autowired
+	SubCorpusRepository  subCorpusRepository;
+	@Autowired
 	SubCorpusService service;
+	@Autowired
+	TweetRepository tweetRepository;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView initForm(@ModelAttribute("user") User principal)
@@ -67,7 +75,7 @@ public class SubCorpusController
 	@Transactional
 	@RequestMapping(method = RequestMethod.POST)
 	public String createSubCorpus(
-		@RequestParam("corpusId") long corpusId,
+		@RequestParam("corpusId") Long corpusId,
 		@RequestParam(value = "name", required = false) String name,
 		@RequestParam(value = "regexp", required = false) String regexp,
 		@RequestParam(value = "hashtags", required = false) String hashtags,
@@ -78,16 +86,20 @@ public class SubCorpusController
 		Optional<String> regexpOp = regexp == null ? Optional.empty() : Optional.of(regexp);
 		String[] tags = hashtags.replace(" ","").split(",");
 		String[] ments = mentions.replace(" ","").split(",");
+		if(tags[0] == "")
+			tags = null;
+		if(ments[0] == "")
+			ments = null;
 		Optional<String[]> hashtagsOp = tags == null ? Optional.empty() : Optional.of(tags);
 		Optional<String[]> mentionsOp = ments == null ? Optional.empty() : Optional.of(ments);
 
-		SubCorpus sub = service.createSubCorpus(corpusId,name,regexpOp,hashtagsOp,mentionsOp);
+		SubCorpus sub = service.createSubCorpus(corpusId, name, regexpOp, hashtagsOp, mentionsOp);
 
 		return "redirect:/sub/" + sub.getId();
 	}
 
 	@RequestMapping(value = "/{idRoute}/sub.csv")
-	public void toCSV(@PathVariable("idRoute") long id,
+	public void toCSV(@PathVariable("idRoute") Long id,
 		HttpServletResponse response,
 		@ModelAttribute User user) throws IOException
 	{
@@ -98,10 +110,33 @@ public class SubCorpusController
 		// creates mock data
 		String headerKey = "Content-Disposition";
 		String headerValue = String.format("attachment; filename=\"%s\"",
-			csvFileName);
+				csvFileName);
 		response.setHeader(headerKey,headerValue);
 
 		service.exportCSV(user,id,response.getWriter());
+	}
+	/**
+	 * @param id the id of the corpus asked
+	 * @param page the number of the current page
+	 * @return The view of a corpus
+	 */
+	@RequestMapping(value = "/{id}/{page}", method = RequestMethod.GET)
+	public ModelAndView pageOne(@PathVariable("id") Long id,@PathVariable("page") int page, @ModelAttribute User user) {
+		ModelAndView model = new ModelAndView("viewSub");
+		SubCorpus corpus = subCorpusRepository.findById(id);
+		int decal=100;
+		int nbrPage = (int) (tweetRepository.countBySubCorpusId(id)/decal) + 1;
+		List l = tweetRepository.findBySubCorpusId(id, new PageRequest(page-1, decal)).getContent();
+		if (l == null || page <1){
+			throw new NotFoundException();
+		}
+		model.addObject("currentPage",page);
+		model.addObject("id", id);
+		model.addObject("list",l);
+		model.addObject("nbrPage", nbrPage);
+		model.addObject("errorMsg", null);
+		model.addObject("state", null);
+		return model;
 	}
 
 	/**

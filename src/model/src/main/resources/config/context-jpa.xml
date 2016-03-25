@@ -24,6 +24,7 @@
                 <!--<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>-->
                 <prop key="hibernate.connection.useUnicode">true</prop>
                 <prop key="hibernate.connection.charSet">UTF-8</prop>
+                <prop key="hibernate.connection.characterEncoding">UTF-8</prop>
                 
                 <!-- schema -->
                 <prop key="hibernate.default_schema">public</prop>

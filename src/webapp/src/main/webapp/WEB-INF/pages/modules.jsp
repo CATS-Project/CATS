@@ -87,7 +87,7 @@
                                 <div class="row">
                                     <div class="input-field col s12">
                                 <textarea id="description" name="description" class="materialize-textarea"
-                                          placeholder="Explain what your module do (HTML supported)"></textarea>
+                                          placeholder="Explain what your module does (HTML supported)"></textarea>
                                         <label for="description">Description</label>
                                     </div>
                                 </div>

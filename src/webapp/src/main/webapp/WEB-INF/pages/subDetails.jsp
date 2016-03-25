@@ -11,6 +11,10 @@
                 <a  href="<c:url value="/sub/${sub.id}/sub.csv"/>" download class="waves-effect waves-light btn">
                     <i class="material-icons right">import_export</i>Dowload my sub corpus in CSV</a>
             </div>
+            <div class="col s12">
+                <a class="waves-effect waves-light btn blue" href="<c:url value="/sub/${sub.id}/1"/>">
+                    <i class="material-icons right">toc</i>See the corpus content</a>
+            </div>
         </div>
 
         <div class="row" style="padding-top: 1rem;">

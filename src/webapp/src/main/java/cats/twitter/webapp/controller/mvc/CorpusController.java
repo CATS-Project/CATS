@@ -226,6 +226,7 @@ public class CorpusController {
             @RequestParam(value = "keyword", required = false) List<String> keywords,
             @RequestParam(value = "location", required = false) List<Double> location,
             @RequestParam(value = "user", required = false) List<String> users,
+            @RequestParam(value= "lang", required= false) String lang,
             @ModelAttribute("twitter") Twitter twitter,
             @ModelAttribute("user") User user,
             Model model
@@ -245,13 +246,13 @@ public class CorpusController {
         if (location != null) {
             doubles = new double[][]{{location.get(1), location.get(0)}, {location.get(3), location.get(2)}};
         }
-
         Optional<String[]> okeywords = keywords == null ? Optional.empty() : Optional.of(keywords.toArray(new String[keywords.size()]));
         Optional<double[][]> oLocation = doubles == null ? Optional.empty() : Optional.of(doubles);
         Optional<Long[]> oUser = ids == null ? Optional.empty() : Optional.of(ids);
         Optional<String[]> oUserString = ids == null ? Optional.empty() : Optional.of(users.toArray(new String[users.size()]));
+        Optional<String> oLangString = lang == null ? Optional.empty() : Optional.of(lang);
 
-        Corpus corpus = collect.addCollect(user, nameC, duration, okeywords, oUserString, oUser, oLocation, tweetRepository);
+        Corpus corpus = collect.addCollect(user, nameC, duration, okeywords, oUserString, oUser, oLocation,oLangString, tweetRepository);
 
         model.addAttribute("user", repository.findOne(user.getId()));
 

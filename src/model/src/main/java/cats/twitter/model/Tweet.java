@@ -38,7 +38,12 @@ public class Tweet {
     @JsonIgnore
     @ManyToOne
     private Corpus corpus;
-    
+
+
+
+    @ManyToOne
+    private SubCorpus subCorpus;
+
     @Field
     private String text;
     
@@ -52,6 +57,16 @@ public class Tweet {
     private String name;
 
     private Date date;
+
+    private String lang;
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
 
     public Long getAuthor() {
         return author;
@@ -109,6 +124,8 @@ public class Tweet {
         this.text = text;
     }
 
+
+
     @JsonIgnore
     public Corpus getCorpus() {
         return corpus;
@@ -116,6 +133,14 @@ public class Tweet {
 
     public void setCorpus(Corpus corpus) {
         this.corpus = corpus;
+    }
+
+    public SubCorpus getSubCorpus() {
+        return subCorpus;
+    }
+
+    public void setSubCorpus(SubCorpus subCorpus) {
+        this.subCorpus = subCorpus;
     }
 
     public Date getDate() {

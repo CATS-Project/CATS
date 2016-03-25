@@ -136,56 +136,58 @@
             </div>
         </div>
         <div class="row">
-            <h4>Launch chained treatements</h4>
-            <c:if test="${modules.size() != 0}">
-                <form method="post" id="formChain" action="<c:url value="/module/request-chained"/>">
-                    <div class="row">
-                        <div class="input-field s11">
-                            <select name="corpusId">
-                                <option value="" disabled selected>Choose your option</option>
-                                <c:forEach var="corpu" items="${corpus}">
-                                    <option value="${corpu.id}">${corpu.name}</option>
-                                </c:forEach>
-                            </select>
-                            <label><b>Corpus</b></label>
-                        </div>
-                        <div class="col s6">
-                            <ul class="collapsible popout" data-collapsible="accordion" id="myModules">
-                                <c:forEach items="${modules}" var="module">
-                                    <li id="${module.id}">
-                                        <div class="collapsible-header">
-                                            <i class="material-icons">settings</i>${module.name} <a href="#!" class="secondary-content"><i class="material-icons chainModule">keyboard_arrow_right</i></a>
-                                        </div>
-                                        <div class="collapsible-body" style="padding: 2rem;">
-                                            <c:forEach items="${module.params}" var="paramModule">
-                                                <div class="row">
-                                                    <div class="input-field col s12">
-                                                        <input id="input2${paramModule.id}" name="mod${module.id}.${paramModule.name}" type="${paramModule.typeHTML}" />
-                                                        <label for="inpu2t${paramModule.id}">${paramModule.displayName}</label>
+            <div class="col s12">
+                <h4>Launch chained treatements</h4>
+                <c:if test="${modules.size() != 0}">
+                    <form method="post" id="formChain" action="<c:url value="/module/request-chained"/>">
+                        <div class="row">
+                            <div class="input-field s11">
+                                <select name="corpusId">
+                                    <option value="" disabled selected>Choose your option</option>
+                                    <c:forEach var="corpu" items="${corpus}">
+                                        <option value="${corpu.id}">${corpu.name}</option>
+                                    </c:forEach>
+                                </select>
+                                <label><b>Corpus</b></label>
+                            </div>
+                            <div class="col s6">
+                                <ul class="collapsible popout" data-collapsible="accordion" id="myModules">
+                                    <c:forEach items="${modules}" var="module">
+                                        <li id="${module.id}">
+                                            <div class="collapsible-header">
+                                                <i class="material-icons">settings</i>${module.name} <a href="#!" class="secondary-content"><i class="material-icons chainModule">keyboard_arrow_right</i></a>
+                                            </div>
+                                            <div class="collapsible-body" style="padding: 2rem;">
+                                                <c:forEach items="${module.params}" var="paramModule">
+                                                    <div class="row">
+                                                        <div class="input-field col s12">
+                                                            <input id="input2${paramModule.id}" name="mod${module.id}.${paramModule.name}" type="${paramModule.typeHTML}" />
+                                                            <label for="inpu2t${paramModule.id}">${paramModule.displayName}</label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </c:forEach>
-                                        </div>
-                                    </li>
-                                </c:forEach>
-                            </ul>
+                                                </c:forEach>
+                                            </div>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="col s6">
+                                <ul class="collapsible popout" data-collapsible="accordion" id="selectedModules">
+                                </ul>
+                            </div>
                         </div>
-                        <div class="col s6">
-                            <ul class="collapsible popout" data-collapsible="accordion" id="selectedModules">
-                            </ul>
+                        <div class="row">
+                            <input type="hidden" id="modulesIDS" name="moduleId" value="" />
+                            <button style="margin-left: 20px;"
+                                    class="btn waves-effect waves-light" type="submit"
+                                    onclick="initModules()" id="submitChain">Launch</button>
                         </div>
-                    </div>
-                    <div class="row">
-                        <input type="hidden" id="modulesIDS" name="moduleId" value="" />
-                        <button style="margin-left: 20px;"
-                                class="btn waves-effect waves-light" type="submit"
-                                onclick="initModules()" id="submitChain">Launch</button>
-                    </div>
-                </form>
-            </c:if>
-            <c:if test="${modules.size() == 0}">
-                No modules available :(
-            </c:if>
+                    </form>
+                </c:if>
+                <c:if test="${modules.size() == 0}">
+                    No modules available :(
+                </c:if>
+            </div>
         </div>
     </jsp:body>
 </t:wrapper>

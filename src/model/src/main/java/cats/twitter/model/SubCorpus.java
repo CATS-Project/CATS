@@ -29,8 +29,13 @@ public class SubCorpus
 	@ManyToOne(cascade = CascadeType.MERGE)
 	private Corpus corpus;
 
+	@OneToMany(mappedBy = "subCorpus")
+	private List<Tweet> tweets = new ArrayList<Tweet>();
+
 	@Column(name = "regex")
 	private String regex;
+
+
 
 	@ElementCollection
 	private List<String> hashtags;
@@ -132,5 +137,13 @@ public class SubCorpus
 	public void setCreationDate(Date creationDate)
 	{
 		this.creationDate = creationDate;
+	}
+
+	public List<Tweet> getTweets() {
+		return tweets;
+	}
+
+	public void setTweets(List<Tweet> tweets) {
+		this.tweets = tweets;
 	}
 }
