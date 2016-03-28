@@ -4,6 +4,7 @@ package cats.twitter.webapp.controller.mvc;
 import cats.twitter.collect.IManageCollect;
 import cats.twitter.exceptions.NotFoundException;
 import cats.twitter.model.Corpus;
+import cats.twitter.model.SubCorpus;
 import cats.twitter.model.User;
 import cats.twitter.repository.*;
 

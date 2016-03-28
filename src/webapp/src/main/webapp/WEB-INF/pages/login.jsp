@@ -27,22 +27,22 @@
 				</c:if>
 			</div>
             <div class="row">
-                <div class="input-field col s6">
+                <div class="input-field col s12 l6 m6">
                     <input id="login" name="login" type="text" class="validate" value="">
                     <label for="login">Login</label>
                 </div>
-                <div class="input-field col s6">
+                <div class="input-field col s12 l6 m6">
                     <input id="password" name="password" type="password" class="validate" value="">
                     <label for="password">Password</label>
                 </div>
             </div>
              <div class="row">
-                <div class="col s6">
+                <div class="col s12 l6 m6">
                     <button class="btn waves-effect waves-light" type="submit">
 		                Login
 		            </button>
                 </div>
-                <div class="col s6">
+                <div class="col s12 l6 m6">
                    <a class=".right-align btn waves-effect waves-light" href="<c:url value="/register"></c:url>">
 		                REGISTER
 		            </a>

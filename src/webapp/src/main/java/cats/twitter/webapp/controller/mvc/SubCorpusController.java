@@ -64,10 +64,12 @@ public class SubCorpusController
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@org.springframework.transaction.annotation.Transactional
 	public ModelAndView pageAll(@PathVariable("id") Long id, @ModelAttribute User user)
 	{
 		ModelAndView model = new ModelAndView("subDetails");
 		SubCorpus sub = service.getSubCorpus(id);
+		sub.lazyLoad(tweetRepository, true);
 		model.addObject("sub",sub);
 		return model;
 	}

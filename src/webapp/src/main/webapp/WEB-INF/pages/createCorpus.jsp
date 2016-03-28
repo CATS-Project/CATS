@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="input-field col s12">
                                         <input id="nameC" type="text" class="validate" name="name">
-                                        <label for="nameC">New corpus name</label>
+                                        <label for="nameC">New corpora name</label>
                                     </div>
                                 </div>
                                 <button class="btn waves-effect waves-light" type="submit" name="action">
@@ -54,20 +54,20 @@
                             <div class="row">
                                 <div class="input-field col s12">
                                     <input id="duration" type="number" class="validate" name="duration">
-                                    <label for="duration">Duration (number of days during wich tweets should be collected, exemple
+                                    <label for="duration">Duration (number of days during which tweets should be collected, example
                                         "30")</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <input id="name" type="text" class="validate" name="name">
-                                    <label for="name">New corpus name</label>
+                                    <label for="name">New corpora name</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <select name="lang" id="lang">
-                                        <option value="" disabled selected>Choose your language (Optional)</option>
+                                        <option value="" disabled selected>Choose a language (Optional)</option>
                                         <option value="fr">French</option>
                                         <option value="en">English</option>
                                         <option value="ar">Arabic</option>
@@ -135,6 +135,7 @@
                     $("#divMap").removeClass("hide");
                     $("#divUser").addClass("hide");
                     $("#divKey").addClass("hide");
+                    initMap();
                 }
                 if($('input[name=filter]:checked').val() == "user"){
                     $("#divUser").removeClass("hide");
@@ -149,7 +150,7 @@
 
             })
         </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg3Kf8HbtHpqVtSoqybLSx_dzFxodJxsM&signed_in=true&libraries=drawing&callback=initMap"
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDg3Kf8HbtHpqVtSoqybLSx_dzFxodJxsM&signed_in=true&libraries=drawing"
                 async defer></script>
     </jsp:body>
 </t:wrapper>

@@ -9,7 +9,7 @@
         <div class="row" style="padding-top: 1rem;">
             <div class="col s6">
                 <a  href="<c:url value="/sub/${id}/sub.csv"/>" download class="waves-effect waves-light btn">
-                    <i class="material-icons right">import_export</i>Dowload my sub-corpus in CSV</a>
+                    <i class="material-icons right">import_export</i>Dowload this sub-corpus in CSV</a>
             </div>
         </div>
         <div class="row">

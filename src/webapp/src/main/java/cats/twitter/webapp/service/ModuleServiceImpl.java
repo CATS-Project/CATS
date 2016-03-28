@@ -89,13 +89,49 @@ public class ModuleServiceImpl implements ModuleService
 		}
 	}
 
+    /**
+     * A user asked a new treatment. We need to contact the module.
+     * on URL : <endpoint>/init
+     * Body : {
+     *     "token":"O29090R9309", <- It's the key to access to the corpus and the key to return the response
+     *     "params":{
+     *         "param1":"toto", <- Params specified when a module register
+     *         "param2":true
+     *     }
+     * }
+     * @param module On what module the treatment will begin
+     * @param params Params to send to the module
+     * @param subcorpus On what subcorpus the treatment will begin
+     * @return the Query object sent to the module.
+     */
+    @Override
+    public Query send(Module module, Map<String, String> params, SubCorpus subcorpus)
+    {
+        Query query = new Query();
+        Request request = makeQuery(module, params, subcorpus, query);
+
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            return restTemplate.postForObject(module.getEndpoint() + "/init", query, Query.class);
+        }
+        catch (RestClientException exception){
+            cats.twitter.model.Result res = new cats.twitter.model.Result();
+            res.setType(TypeRes.ERROR);
+            res.setDate(new Date());
+            res.setResult(exception.getMessage());
+            request.addResult(res);
+            reqRepository.save(request);
+            return null;
+        }
+    }
+
 
 	private Map<String, String> flattenChain(Map<String, String[]> map, int moduleId)
 	{
 		Map<String, String> params = new HashMap<>();
 		String prefix = "mod" + moduleId + ".";
 		map.entrySet().stream().filter(entry -> !entry.getKey().equals("corpusId")
-			&& !entry.getKey().equals("moduleId") && entry.getKey().startsWith(prefix))
+			&& !entry.getKey().equals("moduleId") && !entry.getKey().equals("subcorpus") && entry.getKey().startsWith(prefix))
 			.forEach(entry -> params.put(entry.getKey().replace(prefix,""),entry.getValue()[0]));
 		return params;
 	}
@@ -199,6 +235,34 @@ public class ModuleServiceImpl implements ModuleService
         request.setToken(query.getToken());
         request.setParams(parames);
         request.setCorpus(corpus);
+        request.setInitDate(new Date());
+        request = reqRepository.save(request);
+        reqRepository.flush();
+
+        query.setParams(params);
+        return request;
+    }
+
+    /**
+     * Wrapped function (Transactional(propagation = Propagation.REQUIRES_NEW)),
+     * to make sure the newly created Request is fully committed and present in
+     * the database.
+     *
+     * @param module On what module the treatment will begin
+     * @param parames Params that will be sent to the module
+     * @param subcorpus On what module the treatment will begin
+     * @param query The object that will be sent to the module
+     * @return the newly created request with the token.
+     */
+    @org.springframework.transaction.annotation.Transactional(propagation = Propagation.REQUIRES_NEW)
+    private Request makeQuery(Module module, Map<String, String> parames, SubCorpus subcorpus, Query query) {
+        Map<String, Object> params = changeType(module, parames);
+
+        Request request = new Request();
+        request.setModule(module);
+        request.setToken(query.getToken());
+        request.setParams(parames);
+        request.setSubCorpus(subcorpus);
         request.setInitDate(new Date());
         request = reqRepository.save(request);
         reqRepository.flush();

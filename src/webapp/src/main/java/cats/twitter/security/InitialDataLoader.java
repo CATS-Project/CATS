@@ -59,7 +59,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		Authority adminAuth = createRoleIfNotFound(AuthoritiesConstants.ADMIN);
 		Authority userAuth = createRoleIfNotFound(AuthoritiesConstants.USER);
 
-		Optional<User> ouser = userRepository.findOneByLogin("admin");
+		Optional<User> ouser = userRepository.findOneByLogin(properties.getProperty("login"));
 		if (!ouser.isPresent())
 		{
 			User user = new User();
@@ -71,7 +71,6 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			userRepository.save(user);
 
 		}
-
 		alreadySetup = true;
 	}
 

@@ -1,12 +1,10 @@
 package cats.twitter.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 
+import cats.twitter.repository.TweetRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,25 +24,45 @@ public class SubCorpus
 	@Column(name = "name")
 	private String name;
 
+	@Transient
+	private long count;
+
 	@ManyToOne(cascade = CascadeType.MERGE)
 	private Corpus corpus;
 
 	@OneToMany(mappedBy = "subCorpus")
-	private List<Tweet> tweets = new ArrayList<Tweet>();
+	private List<Tweet> tweets = new ArrayList<>();
+
+	@OneToMany(mappedBy = "subCorpus", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+	private Set<Request> requests;
 
 	@Column(name = "regex")
 	private String regex;
 
-
-
 	@ElementCollection
 	private List<String> hashtags;
-
 	@ElementCollection
 	private List<String> mentions;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
+
+
+	public Set<Request> getRequests() {
+		return requests;
+	}
+
+	public void setRequests(Set<Request> requests) {
+		this.requests = requests;
+	}
+
+
+	public void setMentions(List<String> mentions) {
+		this.mentions = mentions;
+	}
+
+
+
 
 	public Long getId()
 	{
@@ -107,11 +125,19 @@ public class SubCorpus
 		}
 	}
 
+	public long getCount() {
+		return count;
+	}
+
+	public void setCount(long count) {
+		this.count = count;
+	}
+
 	/**
 	 * To avoid the org.hibernate.LazyInitializationException in jsp,
 	 * call this function to preload the object.
 	 */
-	public void lazyLoad()
+	public void lazyLoad(TweetRepository repository, boolean deep)
 	{
 		if (mentions == null || mentions.size() == 0)
 			mentions = null;
@@ -122,6 +148,18 @@ public class SubCorpus
 			hashtags = null;
 		else
 			hashtags = new ArrayList<>(hashtags);
+
+		if (deep)
+		{
+
+			requests = new HashSet<>(requests);
+			for (Request r : requests)
+			{
+				r.lazyLoad();
+			}
+		}
+
+		count = repository.countBySubCorpusId(id);
 	}
 
 	public List<String> getMentions()

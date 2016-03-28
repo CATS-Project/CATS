@@ -161,6 +161,10 @@
                                     <span class="card-title black-text">${request.module.name}</span>
 
                                     <p>Lauched At ${request.initDateFormat}</p>
+                                    <c:forEach items="${request.params}" var="entry">
+                                        <p>${entry.key}: ${entry.value}</p>
+                                    </c:forEach>
+
                                     <c:if test="${request.finished}">
                                         <c:forEach items="${request.results}" var="result">
                                             <p>At ${result.date}, the module returns
@@ -182,6 +186,7 @@
                                     <c:if test="${!request.finished}">
                                         <p>Running…</p>
                                     </c:if>
+
 
                                 </div>
                                 <div class="card-action">

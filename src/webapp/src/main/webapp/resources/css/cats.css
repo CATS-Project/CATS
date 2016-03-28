@@ -34,7 +34,7 @@ ul#nav-mobile li:first-child{
 
 .btn{
     background-color: #66757f;
-    width: 30em;
+    width: 18em;
 }
 
 .btn:hover {
@@ -55,4 +55,18 @@ nav {
 
 .collection a.collection-item {
 	color: #55acee;
+}
+
+/* label focus color */
+.input-field input[type=text]:focus + label {
+    color: #55acee;
+}
+/* label underline focus color */
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid #55acee;
+    box-shadow: 0 1px 0 0 #55acee;
+}
+
+.input-field option{
+    color:#55acee;
 }

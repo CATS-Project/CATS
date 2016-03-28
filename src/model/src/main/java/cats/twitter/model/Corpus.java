@@ -280,7 +280,13 @@ public class Corpus implements Serializable
 		if (subCorpuses == null || subCorpuses.size() == 0)
 			subCorpuses = null;
 		else
+		{
 			subCorpuses = new ArrayList<>(subCorpuses);
+			for(SubCorpus sc :subCorpuses)
+			{
+				sc.lazyLoad(repository, true);
+			}
+		}
 
 		if (deep)
 		{

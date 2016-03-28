@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import cats.twitter.model.*;
+import cats.twitter.repository.SubCorpusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -24,11 +26,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import cats.twitter.model.Corpus;
-import cats.twitter.model.Module;
-import cats.twitter.model.Request;
-import cats.twitter.model.Result;
-import cats.twitter.model.User;
 import cats.twitter.repository.CorpusRepository;
 import cats.twitter.repository.ModuleRepository;
 import cats.twitter.repository.RequestRepository;
@@ -47,6 +44,8 @@ public class ModuleController
 	ModuleRepository moduleRepository;
 	@Autowired
 	CorpusRepository corpusRepository;
+	@Autowired
+	SubCorpusRepository subCorpusRepository;
 	@Autowired
 	ModuleService service;
 	@Autowired
@@ -78,25 +77,30 @@ public class ModuleController
 	 */
 	@RequestMapping(value = "/request/{idModule}", method = RequestMethod.POST)
 	public String createRequest(WebRequest webRequest, @PathVariable("idModule") int idModule,
-		@RequestParam("corpusId") long id, @ModelAttribute User user)
+		@RequestParam("corpusId") long id,@RequestParam("subcorpus") boolean subcorpus, @ModelAttribute User user)
 	{
-
-		Map<String, String[]> map = webRequest.getParameterMap();
 		Module module = moduleRepository.findOne(idModule);
-		Corpus corpus = corpusRepository.findOne(id);
+		Map<String, String[]> map = webRequest.getParameterMap();
+		if(subcorpus){
+			SubCorpus subCorpus = subCorpusRepository.findById(id);
+			service.send(module,flatten(map),subCorpus);
+		}
+		else{
+			Corpus corpus = corpusRepository.findOne(id);
+			service.send(module,flatten(map),corpus);
+		}
 
 		/*
 		 * The webRequest returns a map of arrays, I know that modules parameter are singleton. So we call flatten() to
 		 * transform Map<String,String[]> to Map<String,String>
 		 */
-		service.send(module,flatten(map),corpus);
 		return "redirect:/corpus";
 	}
 
 	private Map<String, String> flatten(Map<String, String[]> map)
 	{
 		Map<String, String> params = new HashMap<>();
-		map.entrySet().stream().filter(entry -> !entry.getKey().equals("corpusId")
+		map.entrySet().stream().filter(entry -> !entry.getKey().equals("corpusId") && !entry.getKey().equals("subcorpus")
 			&& !entry.getKey().equals("moduleId")).forEach(entry -> params.put(entry.getKey(),entry.getValue()[0]));
 		return params;
 	}

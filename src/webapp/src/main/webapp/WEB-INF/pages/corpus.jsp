@@ -41,6 +41,14 @@
                             e.preventDefault();
                         });
 
+                $("form select[name=corpusId]").on("change", function(){
+                    if($('option:selected', this).attr("class") == "subcorpus")
+                        $($(this).parents("form")[0]).children("input[name=subcorpus]").val("true");
+                    else
+                        $($(this).parents("form")[0]).children("input[name=subcorpus]").val("false");
+
+                });
+
             });
         </script>
     </jsp:attribute>
@@ -48,7 +56,7 @@
         <div class="row">
             <div class="col s12">
                 <ul class="collection with-header">
-                    <li class="collection-header"><h4>My corpus</h4></li>
+                    <li class="collection-header"><h4>My corpora</h4></li>
                     <c:forEach var="entry" items="${corpus}">
                         <a href="<c:url value="/corpus/${entry.id}"/>"
                            class="collection-item">${entry.name}
@@ -68,7 +76,7 @@
                         <c:forEach var="sub" items="${entry.subCorpuses}">
                             <a href="<c:url value="/sub/${sub.id}"/>" class="collection-item subCorpuses">
                                 <i class="tiny material-icons">navigation</i> ${sub.name} <span
-                                    class="badge">${sub.creationDate}</span>
+                                    class="badge">${sub.count}</span>
                             </a>
                         </c:forEach>
                     </c:forEach>
@@ -93,17 +101,17 @@
                                           action="<c:url value="/module/request/${module.id}"/>">
                                         <div class="input-field s12">
                                             <select name="corpusId">
-                                                <option value=""
-                                                        disabled selected>Choose your option
-                                                </option>
-                                                <c:forEach var="corpu"
-                                                           items="${corpus}">
-                                                    <option
-                                                            value="${corpu.id}">${corpu.name}</option>
+                                                <option value=""  disabled selected>Choose your option</option>
+                                                <c:forEach var="corpu" items="${corpus}">
+                                                    <option value="${corpu.id}">${corpu.name}</option>
+                                                    <c:forEach var="subcorpus" items="${corpu.subCorpuses}">
+                                                        <option value="${subcorpus.id}" class="subcorpus">&nbsp;&nbsp;&nbsp;${subcorpus.name}</option>
+                                                    </c:forEach>
                                                 </c:forEach>
                                             </select>
                                             <label>Corpus</label>
                                         </div>
+
                                         <c:forEach items="${module.params}"
                                                    var="paramModule">
 
@@ -118,8 +126,8 @@
                                                 </div>
                                             </div>
                                         </c:forEach>
-                                        <input type="hidden" name="moduleId"
-                                               value="${module.id}"/>
+                                        <input type="hidden" name="moduleId" value="${module.id}"/>
+                                        <input type="hidden" name="subcorpus" value="false"/>
                                         <button
                                                 class="btn waves-effect waves-light" type="submit">Launch
                                         </button>
@@ -148,7 +156,6 @@
                                         <option value="${corpu.id}">${corpu.name}</option>
                                     </c:forEach>
                                 </select>
-                                <label><b>Corpus</b></label>
                             </div>
                             <div class="col s6">
                                 <ul class="collapsible popout" data-collapsible="accordion" id="myModules">
@@ -171,7 +178,7 @@
                                     </c:forEach>
                                 </ul>
                             </div>
-                            <div class="col s6">
+                            <div class="col s12">
                                 <ul class="collapsible popout" data-collapsible="accordion" id="selectedModules">
                                 </ul>
                             </div>

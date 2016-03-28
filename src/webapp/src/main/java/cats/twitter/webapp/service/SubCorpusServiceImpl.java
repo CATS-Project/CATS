@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cats.twitter.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +33,14 @@ public class SubCorpusServiceImpl implements SubCorpusService
 	CorpusRepository corpusRepository;
 	@Autowired
 	SubCorpusRepository subRepository;
+	@Autowired
+	TweetRepository tweetRepository;
 
 	@Transactional
 	public SubCorpus getSubCorpus(Long subId)
 	{
 		SubCorpus sub = subRepository.findOne(subId);
-		sub.lazyLoad();
+		sub.lazyLoad(tweetRepository, true);
 		return sub;
 	}
 
@@ -169,6 +172,7 @@ public class SubCorpusServiceImpl implements SubCorpusService
 						t.setName(atweet.getName());
 						t.setDescriptionAuthor(atweet.getDescriptionAuthor());
 						t.setSubCorpus(sub);
+						tweetRepository.save(t);
 					}
 				}
 				isFiltered = false;

@@ -15,7 +15,7 @@
             <c:if test="${state.inprogress}">
                 <div class="col s6">
                     <a  href="<c:url value="/corpus/${id}/machin.csv"/>" download class="waves-effect waves-light btn">
-                        <i class="material-icons right">import_export</i>Dowload my corpus in CSV</a>
+                        <i class="material-icons right">import_export</i>Dowload this corpus in CSV</a>
                 </div>
                 <div class="col s6">
                     <a onclick="$.ajax({method:'delete',url:'<c:url value="/corpus/${id}/collect" />'}).success(function(){location.reload();})" class="waves-effect waves-light btn red">
@@ -25,13 +25,13 @@
             <c:if test="${state.shutdown}">
                 <div class="col s12">
                     <a  href="<c:url value="/corpus/${id}/machin.csv"/>" download class="waves-effect waves-light btn">
-                        <i class="material-icons right">import_export</i>Dowload my corpus in CSV</a>
+                        <i class="material-icons right">import_export</i>Dowload this corpus in CSV</a>
                 </div>
             </c:if>
             <c:if test="${state.error}">
                 <div class="col s6">
                     <a  href="<c:url value="/corpus/${id}/machin.csv"/>" download class="waves-effect waves-light btn">
-                        <i class="material-icons right">import_export</i>Dowload my corpus in CSV</a>
+                        <i class="material-icons right">import_export</i>Dowload this corpus in CSV</a>
                 </div>
                 <div class="col s6">
                     This corpus had finished with an error. Reason : ${errorMsg}

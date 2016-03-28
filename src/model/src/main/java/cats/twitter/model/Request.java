@@ -53,6 +53,17 @@ public class Request
 	@ManyToOne()
 	private Corpus corpus;
 
+	@ManyToOne()
+	private SubCorpus subCorpus;
+
+	public SubCorpus getSubCorpus() {
+		return subCorpus;
+	}
+
+	public void setSubCorpus(SubCorpus subCorpus) {
+		this.subCorpus = subCorpus;
+	}
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private java.util.Date initDate;
 
@@ -61,6 +72,17 @@ public class Request
 
 	@ElementCollection
 	private Map<String,String> params;
+
+	@OneToMany(mappedBy = "corpus", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+	private Set<Request> requests;
+
+	public Set<Request> getRequests() {
+		return requests;
+	}
+
+	public void setRequests(Set<Request> requests) {
+		this.requests = requests;
+	}
 
 	public Map<String, String> getParams() {
 		return params;
@@ -174,6 +196,7 @@ public class Request
 	public void lazyLoad() {
         finished = isFinished();
         results = new ArrayList<>(results);
+		params = new HashMap<>(params);
     }
 	public Boolean isChained()
 	{
