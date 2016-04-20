@@ -25,7 +25,7 @@
 			</div>
             <div class="row">
                 <div class="input-field col s6">
-                    <input id="login" name="login" type="text" class="validate">
+                    <input id="login" name="login" type="text" style="text-transform: lowercase;" class="validate">
                     <label for="login">Login *</label>
                 </div>
                 <div class="input-field col s6">
@@ -53,7 +53,7 @@
                     <label for="lastName">Last Name</label>
                 </div>
             </div>
-            <button class="btn waves-effect waves-light" type="submit">
+            <button class="btn waves-effect waves-light" type="submit" style="width:18em;">
                 Register
             </button>
         </form>

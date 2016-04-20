@@ -32,10 +32,17 @@ ul#nav-mobile li:first-child{
 	color:#4B3ACE !important;
 }
 
-.btn{
+.btn-little{
     background-color: #66757f;
     width: 18em;
 }
+
+.btn{
+    background-color: #66757f;
+    width: 35em;
+}
+
+
 
 .btn:hover {
 	background-color: #292f33;

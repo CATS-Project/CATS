@@ -79,8 +79,10 @@ public class ModuleDTO {
         module.setDescription(description);
         module.setReturns(returns);
         List<Params> paramses = new ArrayList<>();
-        for (int i = 0; i < displayNameParameter.size(); i++) {
-            paramses.add(new Params(displayNameParameter.get(i),nameParameter.get(i),typeParameter.get(i)));
+        if(displayNameParameter != null){
+            for (int i = 0; i < displayNameParameter.size(); i++) {
+                paramses.add(new Params(displayNameParameter.get(i),nameParameter.get(i),typeParameter.get(i)));
+            }
         }
         module.setParams(paramses);
 

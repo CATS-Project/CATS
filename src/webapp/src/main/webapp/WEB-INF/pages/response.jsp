@@ -2,7 +2,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 
-<t:wrapper title="Response">
+<t:wrapper title="">
 
     ${response.result}
 

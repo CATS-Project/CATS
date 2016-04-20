@@ -28,7 +28,7 @@
 			</div>
             <div class="row">
                 <div class="input-field col s12 l6 m6">
-                    <input id="login" name="login" type="text" class="validate" value="">
+                    <input id="login" name="login" type="text" class="validate" style="text-transform: lowercase;" value="">
                     <label for="login">Login</label>
                 </div>
                 <div class="input-field col s12 l6 m6">
@@ -38,12 +38,12 @@
             </div>
              <div class="row">
                 <div class="col s12 l6 m6">
-                    <button class="btn waves-effect waves-light" type="submit">
+                    <button class="btn btn-little waves-effect waves-light" style="width:18em;" type="submit">
 		                Login
 		            </button>
                 </div>
                 <div class="col s12 l6 m6">
-                   <a class=".right-align btn waves-effect waves-light" href="<c:url value="/register"></c:url>">
+                   <a class="right-align btn waves-effect waves-light" style="width:18em;" href="<c:url value="/register"></c:url>">
 		                REGISTER
 		            </a>
                 </div>

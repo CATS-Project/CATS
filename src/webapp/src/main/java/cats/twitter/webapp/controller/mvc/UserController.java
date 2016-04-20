@@ -53,7 +53,7 @@ public class UserController
 
 		if (success != null)
 		{
-			model.addObject("msg","User added successfully, plase wait for admin activation.");
+			model.addObject("msg","User added successfully, please wait for admin activation.");
 		}
 		model.setViewName("login");
 
