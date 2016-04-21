@@ -40,7 +40,7 @@ public class Corpus implements Serializable
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	@OneToMany(mappedBy = "corpus", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToMany(mappedBy = "corpus", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE})
 	private Set<Request> requests;
 
 	@Column(length = 1024)
@@ -52,7 +52,7 @@ public class Corpus implements Serializable
 	@OneToMany(mappedBy = "father")
 	private List<Corpus> fils;
 
-	@OneToMany(mappedBy = "corpus", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "corpus", fetch = FetchType.LAZY, cascade = { CascadeType.ALL})
 	private List<SubCorpus> subCorpuses;
 
 	private boolean calculated = false;

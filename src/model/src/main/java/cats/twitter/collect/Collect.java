@@ -100,9 +100,10 @@ public class Collect extends Observable implements ICollect, Runnable {
                     setStatus(State.INPROGRESS);
                 }
                 if (status.getCreatedAt().after(dateEnd.getTime())){
-                    twitterStream.shutdown();
+                    shutdown();
+
                 }
-                if(corpus.getLang() == null || corpus.getLang().equals(status.getLang()))
+                else if(corpus.getLang() == null || corpus.getLang().equals(status.getLang()))
                 {
                     Tweet t = new Tweet();
                     t.setText(status.getText().replace("\r", "\n"));
@@ -150,7 +151,7 @@ public class Collect extends Observable implements ICollect, Runnable {
         };
         twitterStream.addListener(listener);
         twitterStream.filter(filter);
-        //twitterStream.sample()
+        twitterStream.sample();
 
         return false;
     }

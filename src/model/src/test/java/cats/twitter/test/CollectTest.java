@@ -39,8 +39,8 @@ public class CollectTest {
         Optional<String[]> keywords =  Optional.ofNullable(tmpString);
         Long[] tmpLong = null;
         Optional<Long[]> follow = Optional.ofNullable(tmpLong);
-       // Collect test = new Collect(u, "unknown", 10, keywords, null, follow, bb, null, null);
-        //test.run();
+        Collect test = new Collect(u, "unknown", 10, keywords, null, follow, bb, null, null, null);
+        test.run();
 
    }
 }

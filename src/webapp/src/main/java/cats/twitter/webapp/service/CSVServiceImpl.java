@@ -40,6 +40,8 @@ public class CSVServiceImpl implements CSVService
 	@Autowired
 	TweetRepository tweetRepository;
 
+	private static int LIMIT = 100000;
+
 	/**
 	 * Create a corpus from a csv file.
 	 * 
@@ -67,12 +69,14 @@ public class CSVServiceImpl implements CSVService
 		final String[] header = getHeaders();
 
 		Tweet tweet;
-		while ((tweet = reader.read(Tweet.class,header,getProcessors())) != null)
+		int i =0;
+		while ((tweet = reader.read(Tweet.class,header,getProcessors())) != null && i < LIMIT)
 		{
 
 			tweet.setId(null);
 			tweet.setCorpus(corpus);
 			tweetRepository.save(tweet);
+			i++;
 		}
 
 		return repository.findById(corpus.getId());

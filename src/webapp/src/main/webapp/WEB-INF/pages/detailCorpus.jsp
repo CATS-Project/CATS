@@ -17,13 +17,12 @@
                     <a href="<c:url value="/corpus/${corpus.id}/machin.csv"/>" download
                        class="waves-effect waves-light btn">
                         <i class="material-icons right">import_export</i>Download my corpus in CSV</a>
-                </div>
-                <div class="col s6">
                     <a onclick="$.ajax({method:'delete',url:'<c:url
                             value="/corpus/${corpus.id}/collect"/>'}).success(function(){location.reload();})"
                        class="waves-effect waves-light btn red">
                         <i class="material-icons right">stop</i>Stop the collect</a>
                 </div>
+
             </c:if>
             <c:if test="${corpus.state.shutdown}">
                 <div class="col s12">

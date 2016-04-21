@@ -100,7 +100,7 @@
                                     <form method="post"
                                           action="<c:url value="/module/request/${module.id}"/>">
                                         <div class="input-field s12">
-                                            <select name="corpusId">
+                                            <select name="corpusId" required>
                                                 <option value=""  disabled selected>Choose your option</option>
                                                 <c:forEach var="corpu" items="${corpus}">
                                                     <option value="${corpu.id}">${corpu.name}</option>
@@ -120,7 +120,7 @@
                                                         class="input-field col s12">
                                                     <input
                                                             id="input${paramModule.id}" name="${paramModule.name}"
-                                                            type="${paramModule.typeHTML}"/>
+                                                            type="${paramModule.typeHTML}" step="0.1"/>
                                                     <label
                                                             for="input${paramModule.id}">${paramModule.displayName}</label>
                                                 </div>

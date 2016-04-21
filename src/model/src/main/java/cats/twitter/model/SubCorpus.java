@@ -30,7 +30,7 @@ public class SubCorpus
 	@ManyToOne(cascade = CascadeType.MERGE)
 	private Corpus corpus;
 
-	@OneToMany(mappedBy = "subCorpus")
+	@OneToMany(mappedBy = "subCorpus", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
 	private List<Tweet> tweets = new ArrayList<>();
 
 	@OneToMany(mappedBy = "subCorpus", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE })
