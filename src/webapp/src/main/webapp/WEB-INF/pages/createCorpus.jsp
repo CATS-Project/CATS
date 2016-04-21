@@ -35,9 +35,10 @@
                                 <div class="row">
                                     <div class="input-field col s12">
                                         <input id="nameC" type="text" class="validate" name="name">
-                                        <label for="nameC">New corpora name</label>
+                                        <label for="nameC">New corpus name</label>
                                     </div>
                                 </div>
+                                <label>During the import, please don't close this page or refresh the browser. You'll be taken to the new corpus page once it's ready.</label>
                                 <button class="btn waves-effect waves-light" type="submit" name="action">
                                     Submit
                                 </button>
